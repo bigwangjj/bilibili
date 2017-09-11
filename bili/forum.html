@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html ng-app="forum">
+<head lang="zh-cn">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <title></title>
+    <!--[if lt IE 9]>
+    <script src="important/js/html5shiv.min.js"></script>
+    <script src="important/js/respond.min.js"></script>
+    <![endif]-->
+    <script src="important/js/jquery-1.11.3.js"></script>
+    <link rel="stylesheet" href="important/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/b_common.css">
+    <link rel="stylesheet" href="css/forum.css">
+
+
+</head>
+<body ng-controller="forumCtrl">
+<div class="bigBanner"></div>
+
+<header>
+
+</header>
+
+<section>
+
+    <div class="bumNav">
+        <ul>
+            <li><a href=""><b class="glyphicon glyphicon-home"></b></a>&nbsp;&gt;&nbsp;</li>
+            <li><a href="">地下城与勇士</a>&nbsp;&gt;&nbsp;</li>
+            <li><a href="">论坛</a>&nbsp;&gt;&nbsp;</li>
+            <li><a href="">综合职业区</a>&nbsp;&gt;&nbsp;</li>
+            <li><a href="">剑宗</a>&nbsp;&gt;&nbsp;</li>
+            <li><a href="">关于宗妹四个流派的经验分享</a></li>
+        </ul>
+    </div>
+
+    <div class="forumName">
+        <ul class="left">
+            <li><img src="material/images/jianzong_03.gif"></li>
+            <li><a href="">剑宗</a></li>
+            <li><b>关注:</b><span>154242</span></li>
+            <li><b>帖子:</b><span>524455</span></li>
+        </ul>
+        <div class="right">
+            <input type="submit" value="签&nbsp;到">
+            <div><p>4月30日</p><p>漏签<b>0</b>天</p></div>
+        </div>
+    </div>
+    
+
+
+    <div class="commentAndBanner">
+
+
+        <div class="banner"></div>
+
+        <div class="commentBox">
+            <div class="headTitle">
+                <div class="pArea">关于剑宗四个流派的玩法</div>
+                <div class="buttonArea">
+                    <button>只看楼主</button>
+                    <button>收藏</button>
+                    <a href="#replyContent"><span class="glyphicon glyphicon-comment"></span>回复</a>
+                </div>
+            </div>
+
+
+            <div class="ltBox">
+                <div class="leftCommetBox">
+                    <div>
+                        <div class="imgBox">
+                            <img src="material/images/user/user18.jpg">
+                        </div>
+                        <p class="uname">小豆子</p>
+                        <p class="ulevel">
+                            <span>黄金会员</span>
+                            <img src="material/images/user/level3.jpg">
+                        </p>
+                        <p class="lz">楼主</p>
+                    </div>
+                </div>
+
+                <div class="rightCommentBox">
+                    <div class="text">今天来水一贴！
+                           这里有剑宗四个流派的加点方法，个人总结的！
+                    </div>
+                    <ul>
+                        <li><a href="">举报</a></li>
+                        <li>来自<a href="">iphone客户端</a></li>
+                        <li>创建者</li>
+                        <li>2017-5-4 17:50</li>
+                        <li><a href="">回复</a></li>
+                    </ul>
+                    <div class="kuang"></div>
+                </div>
+            </div>
+
+
+            <div class="ltBox" ng-repeat="Use in user">
+                <div class="leftCommetBox">
+                    <div>
+                        <div class="imgBox">
+                            <img ng-src="material/images/user/{{Use.photo}}">
+                        </div>
+                        <p class="uname">{{Use.uName}}</p>
+                        <p class="ulevel">
+                            <span>{{Use.uLevel}}</span>
+                            <img ng-src="material/images/user/{{Use.uLevelImg}}">
+                        </p>
+                    </div>
+                </div>
+
+                <div class="rightCommentBox">
+                    <div class="text">{{Use.content}}</div>
+                    <ul>
+                        <li><a href="">举报</a></li>
+                        <li><a href="">{{Use.addr}}</a></li>
+                        <li>{{Use.tId}}楼</li>
+                        <li>{{Use.contentTime}}</li>
+                        <li><a href="">回复</a></li>
+                    </ul>
+                    <div class="kuang"></div>
+                </div>
+            </div>
+
+
+
+
+        </div>
+        <div class="clear"></div>
+    </div>
+
+    <div class="pageBranch">
+        <ul>
+            <li>共<b>88</b>条回复贴</li>
+        </ul>
+        <button class="more" ng-show="hasMore" ng-click="loadMore()">加载更多...</button>
+        <p ng-hide="hasMore" id="noMore">没有更多啦！</p>
+    </div>
+
+    <div class="replyBox">
+        <div class="replyHead">
+            <span>发表回复</span>
+            <p>发帖请遵守<a href="">《贴吧协议及七条底线》</a></p>
+            <a href="">贴吧投诉</a>
+        </div>
+        <form>
+
+            <textarea class="replyBody" id="replyContent"></textarea>
+        </form>
+
+        <div class="replyFoot">
+            <input type="button" value="发表" id="fb">
+            <input type="button" value="保存至快速回帖" id="kc">
+        </div>
+    </div>
+
+</section>
+
+<footer>
+
+</footer>
+
+<script src="js/b_common.js"></script>
+<script src="angularJS/angular.js"></script>
+<script src="angularJS/angular-route.js"></script>
+<script src="js/forum.js"></script>
+<script src="important/js/bootstrap.min.js"></script>
+<script src="important/js/bootlint.js"></script>
+
+</body>
+</html>

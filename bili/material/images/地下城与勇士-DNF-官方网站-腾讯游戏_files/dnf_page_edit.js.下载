@@ -1,0 +1,186 @@
+var g_module_number_min = 3;//最少的栏目定制个数。
+var MiniMainLiIds=[1,2,3,4,5,6,7,8],_reloaded=false;//mini页的li id列表。
+
+//DB存储的module id 转化为 min_main中的元素id
+var mapModuleId2MiniMain={"11":"2","12":"3","13":"4","14":"5","15":"6","16":"7","17":"1","18":"8"};
+
+//min_main中的元素id 转化为 DB存储的module id
+var mapMiniMain2ModuleId={"2":"11","3":"12","4":"13","5":"14","6":"15","7":"16","1":"17","8":"18"};
+
+var mapMiniMainId2Name={"2":"周边商城","3":"职业攻略","4":"媒体资讯","5":"版本更新","6":"品牌专区","7":"赛事专区","1":"玩家社区","8":"新手引导"};
+var mapMiniMainId2Note={"2":"精美手办、个性服饰、收藏礼品……","3":"全职业刷图、决斗场、加点攻略……","4":"最新消息，精彩活动……","5":"版本更新详细介绍……","6":"动漫、小说、杂志……","7":"格斗大赛、职业联赛、F1天王赛……","1":"论坛热帖、DNF Girl……","8":"新手礼包、特色介绍、游戏截图……"};
+//数据请求异常时，使用该默认模版
+function loadDefaultModules(){
+      dnf.setshop();//商城
+        dnf.setJob();//职业攻略
+        dnf.setJobNews();//媒体资讯
+        dnf.setChapter();//版本更新
+        dnf.setNovel();//品牌专区
+        dnf.setEventNews();//赛事专区
+        dnf.setZone();//玩家社区
+        dnf.setGameGuide();//新手引导
+}
+
+function showModuleByMId(mid){
+    
+    switch(mid){
+        case 11:
+            dnf.setshop();//商城
+            break;
+        case 12:
+            dnf.setJob();//职业攻略
+            break;
+        case 13:
+            dnf.setJobNews();//媒体资讯
+            break;
+        case 14:
+            dnf.setChapter();//版本更新
+            break;
+        case 15:
+            dnf.setNovel();//品牌专区
+            break;
+        case 16:
+            dnf.setEventNews();//赛事专区
+            break;
+        case 17:
+            dnf.setZone();//玩家社区
+            break;
+        case 18:
+            dnf.setGameGuide();//新手引导
+            break;
+    }
+}
+
+//styleStatus:block,none.
+function genGragWrapLi(liID,styleStatus,liName,liNote){
+    
+    var drag_wrap_li='<li id="r'+liID+'" style="display:'+styleStatus+';">'+liName+'<span>'+liNote+'</span><a href="javascript:void(0);" onClick="close_m(this);" class="close_mbtn">-</a></li>';
+    
+    return drag_wrap_li;
+}
+
+function genGragWrapHiddenLi(liID,styleStatus,liName){
+    
+    var drag_wrap_hidden_li = '<li id="hr'+liID+'" style="display:'+styleStatus+';" onClick="add_m(this);" title="点击添加到页面"><a href="javascript:void(0);">+</a>'+liName+'</li>';
+    
+    return drag_wrap_hidden_li;
+}
+
+//初始化mini页用户的个性化配置
+function initMiniMain(arrayCfg){
+    
+    var drag_wrap_html="";
+    var drag_wrap_hidden_html="";
+    
+    for(var i=0;i < arrayCfg.length;i++){
+        
+        drag_wrap_html += genGragWrapLi(mapModuleId2MiniMain[arrayCfg[i]],"block",mapMiniMainId2Name[mapModuleId2MiniMain[arrayCfg[i]]],mapMiniMainId2Note[mapModuleId2MiniMain[arrayCfg[i]]]);
+        drag_wrap_hidden_html += genGragWrapHiddenLi(mapModuleId2MiniMain[arrayCfg[i]],"none",mapMiniMainId2Name[mapModuleId2MiniMain[arrayCfg[i]]]);
+    }
+    
+    for(var i=0;i < MiniMainLiIds.length;i++){
+        
+        if(-1 == $.inArray(mapMiniMain2ModuleId[MiniMainLiIds[i]],arrayCfg)){
+            
+            drag_wrap_html += genGragWrapLi(MiniMainLiIds[i],"none",mapMiniMainId2Name[MiniMainLiIds[i]],mapMiniMainId2Note[MiniMainLiIds[i]]);
+            drag_wrap_hidden_html += genGragWrapHiddenLi(MiniMainLiIds[i],"block",mapMiniMainId2Name[MiniMainLiIds[i]]);
+        }
+    }
+    
+    g("drag_wrap").innerHTML=drag_wrap_html;
+    g("hiddenUL").innerHTML=drag_wrap_hidden_html;
+    
+}
+
+function getUserCfg(){
+        var url = "http://apps.game.qq.com/dnf/dnfPageEdit/PageEditorQuery.php?r=" + Math.random();
+        $.getScript(url, function() {
+            if (typeof (RST_queryPageEditor) == "undefined" 
+                || RST_queryPageEditor == null 
+                || RST_queryPageEditor.ret != 0)
+            {
+                //alert("网络请求出错，请稍后再试！");
+				if(!_reloaded){
+					_reloaded=true;
+					pgvSendClick({hottag:'PageValue.error.reloaded'});
+					getUserCfg();
+				}
+				else{
+					pgvSendClick({hottag:'PageValue.undefined1'});
+					//临时测试
+					if(typeof(RST_queryPageEditor) == "undefined"){
+						pgvSendClick({hottag:'PageValue.error.undefined'});
+					}else if(RST_queryPageEditor == null){
+						pgvSendClick({hottag:'PageValue.error.null'});
+					}else if(RST_queryPageEditor.ret != 0){
+						pgvSendClick({hottag:'PageValue.error.notZero'});
+					}else{
+						pgvSendClick({hottag: 'PageValue.error.others'});
+					}
+					loadDefaultModules();
+				}
+				return;
+            }
+            
+            var arrayCfg=RST_queryPageEditor.data.split(";");
+            for(var i=0; i<arrayCfg.length; i++){
+                
+                showModuleByMId(parseInt(arrayCfg[i]));
+            }
+            
+            initMiniMain(arrayCfg);
+            dnf._pgvSendPageEditor(RST_queryPageEditor,"logined");//tcss统计
+            dnf.loadScript("http://ossweb-img.qq.com/images/js/comm/delayImage.min.js");
+    
+        }, function() {
+            //alert('很抱歉，网络繁忙，请稍后再试！');
+            loadDefaultModules();
+        });
+}
+
+function saveUserCfg(){
+    
+    var strCFG="";
+    
+    var liList = g("drag_wrap").getElementsByTagName('li');
+    for(var i = 0; i < liList.length; i++){
+        if("none" != liList[i].style.display){
+            
+            //mini main各模块样式的初始display为空字符串，编辑后变成block。
+            strCFG = strCFG + mapMiniMain2ModuleId[liList[i].id.substr(1,liList[i].id.length-1)]+";";
+        }
+    }
+    
+    if("" == strCFG){
+        alert('定制的栏目不能为空！');
+        return;
+    }
+    
+    strCFG = strCFG.substr(0, strCFG.length-1);
+    
+    if(strCFG.split(";").length < g_module_number_min){
+        alert('定制的栏目不能少于'+g_module_number_min+ '！');
+        return;
+    }
+    
+    var url = "http://apps.game.qq.com/dnf/dnfPageEdit/PageEditor.php?r="+ Math.random()+"&sModuleIdTree="+strCFG;
+    
+    $.getScript(url, function() {
+        if (typeof (RST_pageEditor) == "undefined" 
+            || RST_pageEditor == null 
+            || RST_pageEditor.ret != 0)
+        {
+            pgvSendClick({hottag:'PageValue.undefined2'});
+            alert("网络请求出错，请稍后再试！");
+            return;
+        }
+        dnf._pgvSendPageEditor(RST_pageEditor,"saved");//tcss统计
+        alert('定制成功！');
+        window.location.href = window.location.href;
+
+    }, function() {
+        alert('很抱歉，网络繁忙，请稍后再试！');
+    });
+    
+}
+/*  |xGv00|75ac6480d4df354405c034364612833d */

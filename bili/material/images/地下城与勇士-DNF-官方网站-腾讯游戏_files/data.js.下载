@@ -1,0 +1,319 @@
+var week_act_data = {
+//周一
+    "1": {
+       "0": {
+            "title": "南部溪谷",
+            "surl": "http://dnf.qq.com/cp/a20140106mzhd/page02.shtml#mk04",
+			"time":"20:00~21:00"
+        }
+    },
+//周二
+    "2": {
+        "0": {
+            "title": "牛头怪乐园",
+            "surl": "http://dnf.qq.com/cp/a20140106mzhd/page14.shtml#mk34",
+			"time":"16:00~22:00"
+        },
+        "1": {
+            "title": "疯狂马戏团",
+            "surl": "http://dnf.qq.com/cp/a20140106mzhd/page15.shtml#mk37",
+			"time":"00:00~24:00"
+        }
+    },
+//周三
+	"3": {
+        "0": {
+            "title": "南部溪谷",
+            "surl": "http://dnf.qq.com/cp/a20140106mzhd/page02.shtml#mk04",
+			"time":"20:00~21:00"
+			
+        }
+    },
+//周四
+	"4": {
+       "0": {
+            "title": "牛头怪乐园",
+            "surl": "http://dnf.qq.com/cp/a20140106mzhd/page14.shtml#mk34",
+			"time":"16:00~22:00"
+        },
+       "1": {
+            "title": "疯狂马戏团",
+            "surl": "http://dnf.qq.com/cp/a20140106mzhd/page15.shtml#mk37",
+			"time":"00:00~24:00"
+        }
+    },
+//周五
+	"5": {
+	"0": {
+            "title": "新·金角银角",
+            "surl": "http://dnf.qq.com/cp/a20140106mzhd/page12.shtml#mk28",
+			"time":"20:00~22:00"
+        }
+    },
+//周六
+	"6": {
+	"0": {
+            "title": "新·金角银角",
+            "surl": "http://dnf.qq.com/cp/a20140106mzhd/page12.shtml#mk28",
+			"time":"12:00~14:00"
+        },
+        "1": {
+            "title": "守护者祭坛",
+            "surl": "http://dnf.qq.com/cp/a20140106mzhd/page04.shtml#mk10",
+			"time":"14:00~16:00"
+        },
+        "2": {
+            "title": "领主之塔",
+            "surl": "http://dnf.qq.com/cp/a20140106mzhd/page09.shtml#mk25",
+			"time":"16:00~18:00"
+        },
+	"3": {
+            "title": "新·金角银角",
+            "surl": "http://dnf.qq.com/cp/a20140106mzhd/page12.shtml#mk28",
+			"time":"18:00~20:00"
+        },
+        "4": {
+            "title": "守护者祭坛",
+            "surl": "http://dnf.qq.com/cp/a20140106mzhd/page04.shtml#mk10",
+			"time":"20:00~22:00"
+        },
+        "5": {
+            "title": "领主之塔",
+            "surl": "http://dnf.qq.com/cp/a20140106mzhd/page09.shtml#mk25",
+			"time":"22:00~24:00"
+        }
+    },
+//周日
+	"7": {
+	"0": {
+            "title": "新·金角银角",
+            "surl": "http://dnf.qq.com/cp/a20140106mzhd/page12.shtml#mk28",
+			"time":"12:00~14:00"
+        },
+        "1": {
+            "title": "守护者祭坛",
+            "surl": "http://dnf.qq.com/cp/a20140106mzhd/page04.shtml#mk10",
+			"time":"14:00~16:00"
+        },
+        "2": {
+            "title": "领主之塔",
+            "surl": "http://dnf.qq.com/cp/a20140106mzhd/page09.shtml#mk25",
+			"time":"16:00~18:00"
+        },
+	"3": {
+            "title": "新·金角银角",
+            "surl": "http://dnf.qq.com/cp/a20140106mzhd/page12.shtml#mk28",
+			"time":"18:00~20:00"
+        },
+        "4": {
+            "title": "守护者祭坛",
+            "surl": "http://dnf.qq.com/cp/a20140106mzhd/page04.shtml#mk10",
+			"time":"20:00~22:00"
+        },
+        "5": {
+            "title": "领主之塔",
+            "surl": "http://dnf.qq.com/cp/a20140106mzhd/page09.shtml#mk25",
+			"time":"22:00~24:00"
+        }
+    }
+};
+var chapterData={
+	/*"future":[//预告
+		{
+			"title":"信仰之歌",
+			"subTitle":"圣职者二觉",
+			"time":"2月10日"
+		},
+		{
+			"title":"天空之海的巨影",
+			"subTitle":"第七使徒安徒恩",
+			"time":"1月15日",
+			"surl":"http://dnf.qq.com/act/a20150107chapter/"
+		},
+		{
+			"title":"信仰之歌",
+			"subTitle":"圣职者二觉",
+			"time":"2月10日",
+			"surl":"http://dnf.qq.com/act/a20150206chapter/"
+		},
+		{
+			"title":"战火连城",
+			"subTitle":"安徒恩团队攻坚",
+			"time":"3月12日",
+			"surl":"http://dnf.qq.com/act/a20150312chapter/"
+		},
+             {
+			"title":"Come on,Girls.",
+			"subTitle":"女枪二觉",
+			"time":"3月26日",
+			"surl":"http://dnf.qq.com/act/a20150324chapter/"
+		},
+		{
+			"title":"浴火新生",
+			"subTitle":"系统改编",
+			"time":"5月21日",
+			"surl":"http://dnf.qq.com/act/a20150521chapter/"
+		},
+		{
+			"title":"黎明前夕",
+			"subTitle":"安徒恩攻坚改编",
+			"time":"6月4日",
+			"surl":"http://dnf.qq.com/cp/a20150604chapter/"
+		}
+	],
+		{
+			"title":"宿命倒悬",
+			"subTitle":"寂静城",
+			"time":"6月18日",
+			"surl":"http://dnf.qq.com/cp/a20150617mjdzh/index.shtml"
+		},
+             {
+			"title":"阿拉德B计划",
+			"subTitle":"镜像阿拉德",
+			"time":"7月16日",
+			"surl":"http://dnf.qq.com/act/a20150715chapter/page1.htm"
+		},
+		{
+			"title":"阿拉德B计划",
+			"subTitle":"男鬼剑改编",
+			"time":"7月30日",
+			"surl":"http://dnf.qq.com/act/a20150715chapter/page2.htm"
+		},
+             {
+			"title":"阿拉德B计划",
+			"subTitle":"史诗绽放第三期",
+			"time":"8月13日",
+			"surl":"http://dnf.qq.com/act/a20150715chapter/page3.htm"
+		},
+		{
+			"title":"阿拉德B计划",
+			"subTitle":"女格斗改编",
+			"time":"8月27日",
+			"surl":"http://dnf.qq.com/cp/a20150825hmzw/index.htm"
+		},
+		{
+			"title":"夜空魅影",
+			"subTitle":"暗夜使者二觉",
+			"time":"9月22日",
+			"surl":"http://dnf.qq.com/act/a20150918chapter/"
+		},
+		{
+			"title":"武道凌云",
+			"subTitle":"男格斗二觉",
+			"time":"11月5日",
+			"surl":"http://dnf.qq.com/cp/a20151105chapter/"
+		},
+		{
+			"title":"平衡性改版",
+			"subTitle":"决斗场改版",
+			"time":"11月19日",
+			"surl":"http://dnf.qq.com/cp/a20151118zyph/index.shtml"
+		},
+		{
+			"title":"年末大型版本",
+			"subTitle":"男魔法二觉",
+			"time":"12月17日",
+			"surl":"http://dnf.qq.com/act/a20151215chapter/"
+		},
+		{
+			"title":"巨龙地下城改版",
+			"subTitle":"巨龙地下城改版",
+			"time":"1月14日",
+			"surl":"http://dnf.qq.com/cp/a20160113jldxc/"
+		},
+		{
+			"title":"猴年新春盛典",
+			"subTitle":"女鬼剑二觉",
+			"time":"1月26日",
+			"surl":"http://dnf.qq.com/act/a20160207sping/"
+		},
+		{
+			"title":"复苏之风",
+			"subTitle":"大版本更新",
+			"time":"3月24日",
+			"surl":"http://dnf.qq.com/cp/a20160317dbbny/index.htm"
+		},
+		{
+			"title":"公会系统大改版",
+			"subTitle":"纳斯哈伊",
+			"time":"4月7日",
+			"surl":"http://dnf.qq.com/cp/a20160407guildsys/"
+		},
+		{
+			"title":"金角银角地下城",
+			"subTitle":"新版更新",
+			"time":"4月21日",
+			"surl":"http://dnf.qq.com/cp/a20160419jjyj/"
+		},
+		{
+			"title":"5月版本更新",
+			"subTitle":"技能平衡性改版",
+			"time":"5月19日",
+			"surl":"http://dnf.qq.com/cp/a20160519version/"
+		},
+		{
+			"title":"8周年狂欢庆典",
+			"subTitle":"大型版本更新",
+			"time":"6月16日",
+			"surl":"http://dnf.qq.com/cp/a20160616annv/"
+		},
+		{
+			"title":"魔枪士二次觉醒",
+			"subTitle":"天下无双",
+			"time":"6月30日",
+			"surl":"http://dnf.qq.com/cp/a20160630spear2nd/"
+		},
+		{
+			"title":"僵尸地下城",
+			"subTitle":"丰富奖励",
+			"time":"7月28日",
+			"surl":"http://dnf.qq.com/cp/a20160728zombie/"
+		},
+		{
+			"title":"暴走！安徒恩",
+			"subTitle":"新地下城开启",
+			"time":"8月11日",
+			"surl":"http://dnf.qq.com/cp/a20160811anton/"
+		},
+		*/
+	"over":[//以前
+		{
+			"title":"次元彼端",
+			"subTitle":"大型版本更新",
+			"time":"9月27日",
+			"surl":"http://dnf.qq.com/cp/a20160927version/"
+		},
+		{
+			"title":"异界地下城改版",
+			"subTitle":"轻松得勇者",
+			"time":"10月20日",
+			"surl":"http://dnf.qq.com/cp/a20161020demention/"
+		},
+		{
+			"title":"暗精灵遗迹",
+			"subTitle":"改版",
+			"time":"11月03日",
+			"surl":"http://dnf.qq.com/cp/a20161103treasures/"
+		},
+		{
+			"title":"史诗改版",
+			"subTitle":"新增公会红包",
+			"time":"11月17日",
+			"surl":"http://dnf.qq.com/cp/a20161117version/"
+		},
+		{
+			"title":"版本更新",
+			"subTitle":"PVE职业改动",
+			"time":"12月15日",
+			"surl":"http://dnf.qq.com/cp/a20161215version/"
+		}
+	],
+	"online":[//在线
+		{
+			"title":"春节版本",
+			"subTitle":"魔界降临",
+			"time":"1月17日",
+			"surl":"http://dnf.qq.com/act/a20170117spring/"
+		}
+	]
+}/*  |xGv00|2929406d2b947036bbce5ac7ac4a4f6f */

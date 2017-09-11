@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head lang="zh-cn">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <title></title>
+    <!--[if lt IE 9]>
+    <script src="important/js/html5shiv.min.js"></script>
+    <script src="important/js/respond.min.js"></script>
+    <![endif]-->
+    <script src="important/js/jquery-1.11.3.js"></script>
+    <link rel="stylesheet" href="important/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/b_common.css"/>
+    <link rel="stylesheet" href="css/register.css">
+
+</head>
+<body>
+<header>
+
+</header>
+
+<section>
+    <div class="section">
+    <div class="logInBox">
+        <div class="denglu">
+            <span></span>
+            <img src="material/images/zc_03.gif">
+            <span></span>
+        </div>
+        <div class="register">
+            <form>
+
+                <input type="text" id='uname' name="uname" placeholder="用户名:4~18个字符，区分大小写">
+                <span id="must-u">*</span>
+                <span class="Arrow" id="au"></span>
+                <div class="tip" id="du">用户名已存在或格式不符</div>
+                <div class="em" id="eu">用户名不能为空！</div>
+
+
+                <input type="password"  id='upwd' name="upwd" placeholder="密码:4~18个字符，区分大小写">
+                <span id="must-p">*</span>
+                <span class="Arrow" id="ap"></span>
+                <div class="tip" id="dp">密码格式不符</div>
+                <div class="em" id="ep">密码不能为空！</div>
+                <span id="eye" class="glyphicon glyphicon-eye-open"></span>
+
+
+                <div class="phone">
+                    <select name="" id="">
+                        <option value="">中国大陆</option>
+                        <option value="">香港特别行政区</option>
+                        <option value="">澳门特别行政区</option>
+                        <option value="">台湾地区</option>
+                    </select>
+
+
+                    <input type="text" id="uphone" name="uphone" placeholder=" 请填写11位数手机号码">
+                    <span id="must-ph">*</span>
+                    <span class="Arrow" id="aph"></span>
+                    <div class="tip" id="dph">手机号码有误或已被注册</div>
+                    <div class="em" id="eph">手机号码不能为空！</div>
+                </div>
+                <div class="phoneYz">
+                    <input type="text" name="yzm" id="yzm" placeholder="请输入验证码">
+                    <a id="trans">换一张</a>
+                    <div id="yzmBox">
+                        <img id="yanzhengma" src="data/yanzhengma.php">
+                    </div>
+
+                </div>
+                <div class="check">
+                    <input type="checkbox" name="tr" id="tr">
+                    <label for="tr">我已同意
+                        <a href="">《网络安全协议和规范》</a>
+                    </label>
+                </div>
+                <div class="clear"></div>
+                <input type="button" id="zc" value="注册" disabled>
+            </form>
+
+        </div>
+
+    </div>
+    </div>
+</section>
+
+<footer>
+
+</footer>
+
+<script src="js/b_common.js"></script>
+<script src="js/register.js"></script>
+</body>
+</html>

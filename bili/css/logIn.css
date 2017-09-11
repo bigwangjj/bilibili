@@ -1,0 +1,189 @@
+
+
+
+	/*主体部分**************************开始******************/
+
+body{
+		width:100%;
+}
+
+	div.logInBox{
+		width:1160px;
+		margin:0 auto;
+		height:430px;
+		position: relative;
+	}
+	.denglu{
+		width:100%;
+		height:47px;
+			text-align: center;
+	}
+	.denglu>span{
+		width:434px;
+		height:1px;
+		background-color: #000;
+		display:inline-block;
+	}
+	.denglu>img{
+		display:inline-block;
+		position: relative;
+		top:20px;
+		z-index: 100;
+	}
+	div.logInBox>div.leftBox{
+		width:50%;
+		height:330px;
+		float:left;
+		margin-top:10px;
+			position: relative;
+		border-right:1px solid #000;
+	}
+	div.logInBox>div.leftBox>img{
+		width:480px;
+		height:155px;
+			position: absolute;
+			left:48px;
+	}
+	div.logInBox>div.leftBox>div.QR_bl{
+		width:155px;
+		height:175px;
+		position:relative;
+		top:50px;
+		left:163px;
+	}
+	div.logInBox>div.leftBox>div.QR_bl>img{
+		width:155px;
+		height:155px;
+			position:absolute;
+			left:48px;
+			top:0;
+	}
+	div.logInBox>div.leftBox>div.QR_bl>p{
+		width:155px;
+		height:20px;
+		line-height: 20px;
+		text-align: center;
+			position:absolute;
+			left:48px;
+			top:150px;
+	}
+	div.logInBox>div.rightBox{
+		float:left;
+			margin-left:70px;
+		position: relative;
+	}
+	div.logInBox>div.rightBox>p.alert{
+			position: absolute;
+		top:30px;
+		display:none;
+		}
+	div.logInBox>div.rightBox>form{
+
+	}
+	div.logInBox>div.rightBox>form>input{
+			margin-top:20px;
+			height:40px;
+			width:350px;
+			display: block;
+			border: 1px solid #A9A9A9;
+			border-radius: 3px;
+			padding-left:8px;
+			font-size: 16px;
+	}
+	#Name{
+		margin-top:60px;
+	}
+	a.missCode{
+		position:absolute;
+		top: 166px;;
+		left: 289px;
+		font-size:12px;
+		color:#31b0d5;
+	}
+	div.logInBox>div.rightBox>form>div.yz{
+			margin-top:20px;
+			height:35px;
+	}
+	div.logInBox>div.rightBox>form>div.yz>input[name=yanzheng]{
+			height:35px;
+			width:150px;
+			float: left;
+			margin-right:5px;
+			border: 1px solid #A9A9A9;
+			border-radius: 3px;
+			padding-left:8px;
+			font-size: 16px;
+	}
+	div.logInBox>div.rightBox>form>div.yz>#dtyzm{
+			float: left;
+			width:120px;
+			height:30px;
+			line-height:3;
+			margin-right:5px;
+	}
+	div.logInBox>div.rightBox>form>div.yz>a{
+			height:30px;
+			line-height:3;
+	}
+	input[type=checkbox]{
+			float: left;
+			height:35px;
+			margin-right:5px;
+	}
+	div.logInBox>div.rightBox>form>.check{
+			margin-top:10px;
+			height:35px;
+			line-height:35px;
+	}
+	div.logInBox>div.rightBox>form>.check>span{
+			float: left;
+			color:#c0c0c0;
+			font-size: 12px;
+	}
+	div.logInBox>div.rightBox>form>.check>label{
+			float:left;
+			margin-right:5px;
+	}
+	div.logInBox>div.rightBox>form>div.dbtn{
+			margin-top:10px;
+			text-align: left;
+		height:35px;
+	}
+	div.logInBox>div.rightBox>form>div.dbtn>input{
+      float:left;
+			height:40px;
+			width:170px;
+			margin-right:20px;
+			display: block;
+			border: 1px solid #A9A9A9;
+			border-radius: 3px;
+			padding-left:8px;
+			font-size: 16px;
+	}
+	div.logInBox>div.rightBox>form>div.dbtn>.dl{
+		background-color: #03d0e3;
+	}
+	div.logInBox>div.rightBox>form>div.dbtn>.dl:hover{
+		background-color: #31b0d5;
+	}
+	div.logInBox>div.rightBox>form>div.dbtn>.zc{
+		background-color: #fff;
+	}
+	div.aLog{
+			height:20px;
+			margin-top: 10px;
+			text-align: left;
+	}
+	div.logInBox>div.rightBox>form>div.aLog>a{
+
+	}
+	div.logInBox>div.rightBox>form>div.aLog>a>img{
+		width:20px;
+		height:20px;
+		vertical-align: bottom;
+	}
+	/*主体部分**************************结束******************/
+
+		/*1200px以上视口样式表结尾*/
+
+

@@ -1,0 +1,334 @@
+//LoginManager.checkLogin(function(){document.getElementById("login_qq_span").innerHTML = LoginManager.getUserUin();});
+var user_areaname = '';
+var user_areaid = '';
+var user_servername = '';
+var user_rolename = '';
+var user_roleid = '';
+var user_parentrolejobid = '';
+var user_childrolejobid = '';
+var user_rolelevel = '';
+
+
+function clickRoleQiehuanBtn() {
+	checkLoginStatus(
+		function() {
+			// {}{}{}{}{}{角色切换区域的初始化
+			need([ "biz.roleselector"], function(RoleSelector) {
+				RoleSelector.init({
+					'gameId' : 'DNF',
+					'type' : 'float',
+					'isQueryRole' : true,
+					'isShutdownSubmit' : false,
+					'area1ContentId' : 'area1ContentId',
+					'areaContentId' : 'areaContentId',
+					'roleContentId' : 'roleContentId',
+					'confirmButtonId' : 'confirmRoleQiehuan',
+					'submitEvent' : function(roleObject) {
+						doRoleChange(roleObject);
+					},
+					'cancelEvent' : function() {
+					},
+					'openEvent' : function() {
+					},
+					'closeEvent' : function() {
+					}
+				});
+				RoleSelector.show();
+			});
+			
+		}		
+	
+	);
+}
+
+function doRoleChange(roleObject) {
+	if (typeof(roleObject.submitData) != 'undefined' && roleObject.submitData != null) {
+		// 查询到玩家正常角色信息后，再查询玩家pK等级信息'
+		user_areaid = roleObject.submitData.areaid;
+		user_servername = roleObject.submitData.areaname;
+		user_rolename = roleObject.submitData.rolename;
+		user_roleid = roleObject.submitData.roleid;
+		user_parentrolejobid = roleObject.submitData.rolejob;
+		user_rolelevel = roleObject.submitData.rolelevel;
+//		user_areaname = getAreaName(user_servername, user_areaid);
+	      
+		roleChange(user_areaid,user_servername,user_rolename,user_roleid,user_parentrolejobid,user_rolelevel);
+		return;
+	} else {
+		alert("很抱歉，服务器暂时繁忙，请您稍后再试！");
+	}
+	
+	return;
+}
+
+var roleChangeCanDoCgiReuest = 0;
+function roleChange(user_areaid,user_servername,user_rolename,user_roleid,user_parentrolejobid,user_rolelevel) {
+	
+	if (roleChangeCanDoCgiReuest++ != 0) {
+		return false;
+	}
+
+	var params = {
+		'a' : 'roleChange',
+		'areaid' : user_areaid,
+		'roleid' : user_roleid
+	};
+
+	var dataCallback = function(json) {
+		roleChangeCanDoCgiReuest = 0;
+		
+		if (!json) {
+			alert("很抱歉，服务器暂时繁忙，请您稍后再试！");
+		} else {
+			var code = json.ret.toString();
+			var msg = json.msg;
+			var data = json.data;
+			
+			if (code == '0') {
+				_getAreaName(user_areaid);
+				updatePagePlayerInfo(_my_area_name,user_areaid,_my_server_name,user_rolename,user_roleid,user_parentrolejobid,data.childrolejobid,user_rolelevel,data.pvplevel,data.jobName,data.changeJobName,data.wakeup1Name,data.wakeup2Name,data.tickets,data.fight,data.pvpGradeName);
+			} else {
+				alert(msg.toString());
+			}
+		}
+		return;
+	};
+
+	doCgiRequest(params, dataCallback);
+	return;
+}
+
+function updatePagePlayerInfo(user_areaname,user_areaid,user_servername,user_rolename,user_roleid,user_parentrolejobid,user_childrolejobid,user_rolelevel,user_pvplevel,user_jobName,user_changeJobName,user_wakeup1Name,user_wakeup2Name,user_tickets,user_fight,user_pvpGradeName)
+{
+	//rolejob 取大职业
+	need("util.jquery-min", function(jquery) {
+		
+		$('#left_role_name').text(user_rolename);
+		$('#left_suozai_daqu').text(user_areaname);
+		$('#left_suozai_fuwuqi').text(user_servername);
+		$('#left_role_level').text(user_rolelevel + '级');
+
+		$('#left_role_zhiye').text(user_jobName);
+		
+		$('#player_info_area_display').attr('style', 'display:block');
+		
+		$('#role_chanage_btn_area_display').attr('style', 'display:block');
+		
+		$('#middle_role_jobname').text(user_jobName);
+		if (user_changeJobName) {
+			$('#middle_role_changeJobName').text(user_changeJobName);
+		}
+		if (user_wakeup2Name || user_wakeup1Name) {
+			$('#changeJobDesc').text('');
+			$('#middle_role_changeJobName').text('');
+			if (user_wakeup2Name) {
+				$('#middle_role_wakeupName').text(user_wakeup2Name);
+			} else if (user_wakeup1Name) {
+				$('#middle_role_wakeupName').text(user_wakeup1Name);
+			}
+		}
+		
+		$('#middle_pvp_grade_name').html('<p><strong class="f_14">'+user_pvpGradeName+'</strong></p>');
+		
+		$('#middle_role_level').text(user_rolelevel);
+		$('#middle_role_tickets').text(user_tickets);
+		$('#middle_role_fight').text(user_fight);
+	});
+}
+comm={};
+comm.loadScript=function(url,callback){
+	var script = document.createElement('script');
+	script.type = "text/javascript";
+	if (script.readyState) {
+		script.onreadystatechange = function() {
+			if (script.readyState == "loaded" || script.readyState == "complete") {
+				script.onreadystatechange = null;
+				if (callback) {
+					callback()
+				}
+			}
+		}
+	} else {
+		script.onload = function() {
+			if (callback) {
+				callback()
+			}
+		}
+	}
+	script.src = url;
+	document.body.appendChild(script)
+};
+comm.loadScript("http://gameact.qq.com/comm-htdocs/js/game_area/dnf_server_select.js",function(){
+});
+var _my_area_name = _my_server_name = '';
+function _getAreaName(areaid) {
+	if (typeof(DNFServerSelect) != 'undefined' && DNFServerSelect.STD_DATA != null) {
+		$.each(DNFServerSelect.STD_DATA, function(k, v) {
+			if (v.opt_data_array) {
+				$.each(v.opt_data_array, function(opt_k, opt_v) {
+					if (opt_v && opt_v.v == areaid) {
+						_my_area_name = v.t;
+						_my_server_name = opt_v.t;
+		            	return false;
+		            }
+				});
+			}
+      });
+	}
+	
+}
+
+var getPlayerCanDoCgiReuest = 0;
+function getPlayer() {
+	if (getPlayerCanDoCgiReuest++ != 0) {
+		return false;
+	}
+	var params = {
+		'a' : 'getPlayer',
+		'areaid' : 0,
+		'roleid' : 0
+	};
+    
+	var dataCallback = function(json) {
+		getPlayerCanDoCgiReuest = 0;
+		if (!json) {
+			alert("很抱歉，服务器暂时繁忙，请您稍后再试！");
+		} else {
+			var code = json.ret.toString();
+			var msg = json.msg;
+			var data = json.data;
+			if (code == '11111') {// 无数据
+				//showRoleSelector();
+			} else if (code == '9996') {
+				//loginFunc();
+			} else if (code == '0') {// //有数据，直接付与页面
+				if (data.areaid) {
+					// init
+					_getAreaName(data.areaid);
+					updatePagePlayerInfo(_my_area_name,data.areaid,_my_server_name,data.rolename,data.roleid,data.parentrolejobid,data.childrolejobid,data.rolelevel,data.pvplevel,data.jobName,data.changeJobName,data.wakeup1Name,data.wakeup2Name,data.tickets,data.fight,data.pvpGradeName);
+				}
+			} else {
+				alert(msg.toString());
+			}
+		}
+		return;
+	};
+
+	doCgiRequest(params, dataCallback);
+	return;
+}
+
+function doCgiRequest(params, callback) {
+	var func = function() { 
+		need("util.jquery-min",function(jquery){
+			 var url = 'http://apps.game.qq.com/dnf/dnfPageEdit/PlayerInfo.php?a='+params.a+'&areaid='+params.areaid+'&roleid='+params.roleid+'&r=' + Math.random();
+			 	comm.loadScript(url, function() {
+			        if (typeof (RST_playerInfo) == "undefined" 
+			            || RST_playerInfo == null 
+			            || RST_playerInfo.ret != 0)
+			        {
+			        	if (RST_playerInfo.msg.indexOf('您还没有登录，请登录后再试')>-1) {
+			        		return;
+			        	}
+			        	
+			        	alert("很抱歉，服务器暂时繁忙，请您稍后再试！");
+			            return;
+			        }
+			        callback(RST_playerInfo);
+			    });
+		});
+		
+		return;
+	};
+	checkLoginStatus(func);
+	return;
+}
+
+function loginFunc()
+{
+	need(["biz.login","util.jquery-min"], function(LoginManager, jquery) {
+		/*LoginManager.init({
+            needReloadPage : true
+        });*/
+        
+        LoginManager.login(function() {
+        	window.location.href = window.location.href;
+		 	//$('#player_info_area_display').attr('style', 'display:block');
+        	$('#role_chanage_btn_area_display').attr('style', 'display:block');
+        	getPlayer();
+        });
+        
+    });
+    return;
+}
+
+function logoutFunc()
+{
+	 need(["biz.login","util.jquery-min"], function(LoginManager, jquery) {
+         LoginManager.logout(function(){
+        	 	 window.location.href = window.location.href;
+	        	 $('#player_info_area_display').attr('style', 'display:none');
+	        	 $('#role_chanage_btn_area_display').attr('style', 'display:none');
+	        	 return;
+        	 }
+         );
+     });
+     return;
+}
+
+//检查登录态
+function checkLoginStatus(func) {
+	
+	need(["biz.login","util.jquery-min"], function(LoginManager) {
+		 LoginManager.checkLogin(function() {
+			 	//$('#player_info_area_display').attr('style', 'display:block');
+		    	func();
+		    }, function() {
+		    	LoginManager.login(function() {
+		    		//$('#player_info_area_display').attr('style', 'display:block');
+		        	func();
+		        });
+		    });
+	});
+}
+
+function setVipStatus(res){
+    var strVip="";
+    
+    if(1 == res.sOutValue1) {strVip += "会员|";_vip=true;}
+    if(1 == res.sOutValue2) {strVip += "红钻|";_qshow=true;}
+    if(1 == res.sOutValue3) {strVip += "黄钻|";_zone=true;}
+    if(1 == res.sOutValue4) {strVip += "蓝钻|";_game=true;}
+    if(1 == res.sOutValue5) {strVip += "绿钻|";_music=true;}
+
+    if("" != strVip){
+        strVip.substr(0,strVip.length-1);
+        $("#userVipType").html('您是'+strVip+'用户。');
+        
+    }else{
+        $("#userVipType").html('');
+    }
+}
+
+//提交请求至AME
+amsCfg_213519 = {
+    "iActivityId": 38162, //活动id    
+    "iFlowId":    213519, //流程id
+        "sNeedSubmitPopDiv":  false , // 是否开启loading层
+    "fFlowSubmitEnd": function(res){
+        setVipStatus(res);
+    },
+    "fFlowSubmitFailed":function(){
+        setVipStatus(res);
+    }
+};
+
+need(["biz.login","util.jquery-min"], function(LoginManager) {
+	 LoginManager.checkLogin(function() {
+	        
+			amsSubmit(38162,213519);
+			
+	    	getPlayer();
+	    });
+});
+/*  |xGv00|0fbac7feb1bca6539e9a961607cd77fc */

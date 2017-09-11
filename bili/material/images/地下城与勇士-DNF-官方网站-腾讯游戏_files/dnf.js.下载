@@ -1,0 +1,1331 @@
+(function(){
+	if(window.dnf){
+		return;
+	};
+	var dnf={};
+	dnf.actAdsHtml = null; //保存热门推荐活动的html元素内容
+	dnf.ua=navigator.userAgent;
+	dnf.$$=function(elem){return document.getElementById(elem);};
+	dnf.getElementsByClassName=function(id, className,tagName){
+		var o = "string" == typeof id ? dnf.$$(id) : id;
+		var all = tagName ? o.getElementsByTagName(tagName) : o.getElementsByTagName("div");
+		var elements = new Array();
+		for (var i = 0; i < all.length; i++) {
+			if (all[i].className != className) continue;
+			elements[elements.length] = all[i]
+		}
+		return elements
+	};
+	dnf.addEventSimple = function(el, type, handler, capture) {
+		if (typeof el.addEventListener != 'undefined') {
+			if (type === 'mouseenter') el.addEventListener('mouseover', dnf.withinElement(handler), capture);
+			else if (type === 'mouseleave') el.addEventListener('mouseout', dnf.withinElement(handler), capture);
+			else el.addEventListener(type, handler, capture)
+		} else if (typeof el.attachEvent != 'undefined') el.attachEvent('on' + type, handler);
+		else el['on' + type] = handler
+	}
+	dnf.withinElement=function(handler){return function(e){var parent=e.relatedTarget;while(parent&&parent!=this){try{parent=parent.parentNode}catch(e){break}}if(parent!=this)handler.call(this,e)}};
+	dnf.crtElem=function(o){return document.createElement(o);};
+	dnf.Extend=function(destination, source){
+		for(var property in source){destination[property]=source[property]}return destination
+	}
+	dnf.initFlash=function(elem,url,w,h){
+
+		var notApple = function() {
+			var rs = false;
+			if (dnf.ua.indexOf("MSIE") != -1) {
+				try {
+					if (new ActiveXObject('ShockwaveFlash.ShockwaveFlash')) {
+						rs = true
+					}
+				} catch(e) {}
+			} else {
+				var np = navigator.plugins;
+				if (np && np.length) {
+					for (var i = np.length; i--;) {
+						if (np[i].name.toLowerCase().indexOf("shockwave") == -1) {
+							rs = true
+						}
+					}
+				}
+			}
+			return dnf.ua.indexOf("iPhone") == -1 && dnf.ua.indexOf("iPad") == -1 && rs
+		} ();
+		if (notApple) {
+
+			dnf.loadScript("http://ossweb-img.qq.com/images/js/basic/tgswfobj_s.js",
+			function() {
+				insertSwfV2(elem, url, w, h, {},
+				{},
+				"10.0")
+			})
+
+			/*dnf.loadScript("http://ossweb-img.qq.com/images/js/basic/tgswfobj_s.js",
+			function() {
+				//var params = { scale:"noscale", wmode:"transparent",align: "middle",allowFullscreen: "true",allowScriptAccess: "always"}
+				//swfobject.embedSWF(url, elem, w, h, "9.0.0",null, {}, params);
+				insertSwfV2("flashBox","http://cf.qq.com/act/a20160415index/btn-v1.swf?d=0220","290",'418',{},{},"10.0");
+			})*/
+		} else {}
+	};
+	dnf.injectSwf=function(arg) {
+		var cfg = {
+			'wrapId': 'videoCont'
+			,'vid': ''
+			,'w': 500
+			,'h': 300
+			,'auto': 0
+		};
+		for (var i in arg) {
+			arg.hasOwnProperty(i) && arg[i] && (cfg[i] = arg[i]) ;
+		}
+
+		var swf = '\
+			<object id="tenvideo_flash_player_1403119131105" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" width="' + cfg.w + '" height="' + cfg.h + '">\
+				<param name="Movie" value="http://static.video.qq.com/TencentPlayer.swf?vid='+ cfg.vid +'&autoplay=' + cfg.auto + '&skin=http://imgcache.qq.com/minivideo_v1/vd/res/skins/TencentPlayerMiniSkin.swf">\
+				<param name="WMode" value="transparent">\
+				<param name="Quality" value="High">\
+				<param name="Scale" value="NoScale">\
+				<param name="AllowFullScreen" value="true">\
+				<param name="AllowScriptAccess" value="always">\
+				<embed type="application/x-shockwave-flash" src="http://static.video.qq.com/TencentPlayer.swf?vid='+ cfg.vid +'&autoplay=' + cfg.auto + '&skin=http://imgcache.qq.com/minivideo_v1/vd/res/skins/TencentPlayerMiniSkin.swf" width="'+ cfg.w + '" height="'+ cfg.h +'" quality="high" wmode="transparent" allowScriptAccess="always" allowFullScreen="true">\
+			</object>\
+			';
+		document.getElementById(cfg.wrapId).innerHTML = swf ;
+	};
+	dnf.loadScript=function(url,callback){
+		var script = document.createElement('script');
+		var tagSplit=url.split("/");
+		var tag=tagSplit[tagSplit.length-3]+tagSplit[tagSplit.length-2]+tagSplit[tagSplit.length-1];
+		if(eval('dnf.s'+tag.replace(/\=/g,'').replace(/\./g,'').replace(/\?/g,'').replace(/\_/g,'').replace(/\-/g,'').replace(/\&/g,''))){
+			if (callback) {
+				callback()
+			}
+		}
+		else{
+			if (script.readyState) {
+				script.onreadystatechange = function() {
+					if (script.readyState == "loaded" || script.readyState == "complete") {
+						script.onreadystatechange = null;
+						if (callback) {
+							callback()
+						}
+						var tagSplit=url.split("/");
+						var tag=tagSplit[tagSplit.length-3]+tagSplit[tagSplit.length-2]+tagSplit[tagSplit.length-1];
+						eval('dnf.s'+tag.replace(/\=/g,'').replace(/\./g,'').replace(/\?/g,'').replace(/\_/g,'').replace(/\-/g,'').replace(/\&/g,'')+'=true');
+					}
+				}
+			} else {
+				script.onload = function() {
+					if (callback) {
+						callback()
+					}
+					var tagSplit=url.split("/");
+					var tag=tagSplit[tagSplit.length-3]+tagSplit[tagSplit.length-2]+tagSplit[tagSplit.length-1];
+					eval('dnf.s'+tag.replace(/\=/g,'').replace(/\./g,'').replace(/\?/g,'').replace(/\_/g,'').replace(/\-/g,'').replace(/\&/g,'')+'=true');
+				}
+			}
+			script.type = "text/javascript";
+			script.src = url;
+			document.body.appendChild(script);
+
+		}
+
+	};
+
+
+	dnf.creation=function(id,className,_html,_delayLoad){
+		var _box=document.createElement("div");
+		_box.id=id;
+		//if(_delayLoad){_box.setAttribute('id','haha');}
+		_box.className=className;
+		_box.setAttribute('delayload',"dnf.exposure('"+id+"')");
+		_box.innerHTML=_html;
+		document.getElementById("main").appendChild(_box);
+
+	};
+	dnf.exposure=function(id){
+		pgvSendClick({hottag:'main.exposure.'+id});
+		if(id=="raiders"){
+			dnf.showUpdataNum();
+		}
+	}
+	dnf.setshop=function(){
+		dnf.creation("shop","box",'<div class="modle-tit"><div class="modle-tit-more"><a href="http://dnfcity.qq.com" target="_blank">更多 <s class="sprite-icon icon-more"></s></a></div><s class="sprite-icon icon-tit"></s><s class="sprite-icon icon-tit-shop"></s></div><ul class="shop_list q" id="shop_list"></ul>');
+		var shopHTML="",mallIndexDatad;
+		dnf.loadScript('http://dnfcity.qq.com/html/mallIndexData.js',function(){
+			for(i=0;i<mallIndexData.length;i++){
+				shopHTML+='<li><a href="'+mallIndexData[i].wareUrl+'" target="_blank"><img src="'+mallIndexData[i].imagePath+'" width="125" height="131" border="0" alt="" /></a><strong>'+decodeURI(mallIndexData[i].wareName)+'</strong><span class="yj">原价:'+mallIndexData[i].marketPrice+'元</span><span>现价:<em>'+mallIndexData[i].basePrice+'</em>元</span></li>'
+			}
+			dnf.$$("shop_list").innerHTML=shopHTML;
+		});
+	};
+	dnf.setJob=function(){
+		//_html='<div class="modle-tit"><s class="sprite-icon icon-tit"></s><s class="sprite-icon icon-tit-raiders"></s></div><div class="raiders-other"><a href="http://dnf.17173.com/" target="_blank">17173资料站 <s class="sprite-icon icon-more"></s></a><a href="http://games.qq.com/tencent/dnf/" target="_blank">官方资料站 <s class="sprite-icon icon-more"></s></a></div><div class="raiders-bd"><div id="job-tab"><div class="job-list"><div class="job-name sprite-bg job-name1"><a href="javascript:;">鬼剑士</a></div><div class="job-info">    <ul class="raiders-news"></ul>    <ul class="raiders-links"><li><a href="http://dnf.qq.com/book2011/gdc/10125/182.shtml" target="_blank"><s class="sprite-icon icon-story"></s>背景故事</a></li><!--<li><a href="#"><s class="sprite-icon icon-wake"></s>初次觉醒</a></li><li><a href="#"><s class="sprite-icon icon-wakeagain"></s>二次觉醒</a></li>--><li><a href="http://dnf.qq.com/v/search.shtml?iType=75" target="_blank"><s class="sprite-icon icon-jobvideo"></s>职业视频</a></li><li><a href="http://dnf.qq.com/raiders/search.shtml?rolejob=0&rolelevel=&type=1" target="_blank"><s class="sprite-icon icon-jobraiders"></s>职业攻略</a></li><li><a href="http://dnf.duowan.com/s/jnmn/gjs.html" target="_blank"><s class="sprite-icon icon-points"></s>加点模拟器</a></li>    </ul></div></div><div class="job-list"><div class="job-name sprite-bg job-name2"><a href="javascript:;">格斗家（女）</a></div><div class="job-info">    <ul class="raiders-news"></ul>    <ul class="raiders-links"><li><a href="http://dnf.qq.com/book2011/gdc/10125/183.shtml" target="_blank"><s class="sprite-icon icon-story"></s>背景故事</a></li><!--<li><a href="#"><s class="sprite-icon icon-wake"></s>初次觉醒</a></li><li><a href="#"><s class="sprite-icon icon-wakeagain"></s>二次觉醒</a></li>--><li><a href="http://dnf.qq.com/v/search.shtml?iType=77" target="_blank"><s class="sprite-icon icon-jobvideo"></s>职业视频</a></li><li><a href="http://dnf.qq.com/raiders/search.shtml?rolejob=1&rolelevel=&type=1" target="_blank"><s class="sprite-icon icon-jobraiders"></s>职业攻略</a></li><li><a href="http://dnf.duowan.com/s/jnmn/gdj.html" target="_blank"><s class="sprite-icon icon-points"></s>加点模拟器</a></li>    </ul></div></div><div class="job-list"><div class="job-name sprite-bg job-name3"><a href="javascript:;">神枪手</a></div><div class="job-info">    <ul class="raiders-news"></ul>    <ul class="raiders-links"><li><a href="http://dnf.qq.com/book2011/gdc/10125/186.shtml" target="_blank"><s class="sprite-icon icon-story"></s>背景故事</a></li><!--<li><a href="#"><s class="sprite-icon icon-wake"></s>初次觉醒</a></li><li><a href="#"><s class="sprite-icon icon-wakeagain"></s>二次觉醒</a></li>--><li><a href="http://dnf.qq.com/v/search.shtml?iType=79" target="_blank"><s class="sprite-icon icon-jobvideo"></s>职业视频</a></li><li><a href="http://dnf.qq.com/raiders/search.shtml?rolejob=2&rolelevel=&type=1" target="_blank"><s class="sprite-icon icon-jobraiders"></s>职业攻略</a></li><li><a href="http://dnf.duowan.com/s/jnmn/sqs.html" target="_blank"><s class="sprite-icon icon-points"></s>加点模拟器</a></li>    </ul></div></div><div class="job-list"><div class="job-name sprite-bg job-name4"><a href="javascript:;">魔法师（女）</a></div><div class="job-info">    <ul class="raiders-news"></ul>    <ul class="raiders-links"><li><a href="http://dnf.qq.com/book2011/gdc/10125/184.shtml" target="_blank"><s class="sprite-icon icon-story"></s>背景故事</a></li><!--<li><a href="#"><s class="sprite-icon icon-wake"></s>初次觉醒</a></li><li><a href="#"><s class="sprite-icon icon-wakeagain"></s>二次觉醒</a></li>--><li><a href="http://dnf.qq.com/v/search.shtml?iType=83" target="_blank"><s class="sprite-icon icon-jobvideo"></s>职业视频</a></li><li><a href="http://dnf.qq.com/raiders/search.shtml?rolejob=3&rolelevel=&type=1" target="_blank"><s class="sprite-icon icon-jobraiders"></s>职业攻略</a></li><li><a href="http://dnf.duowan.com/s/jnmn/mfs.html" target="_blank"><s class="sprite-icon icon-points"></s>加点模拟器</a></li>    </ul></div></div><div class="job-list"><div class="job-name sprite-bg job-name5"><a href="javascript:;">男法师</a></div><div class="job-info">    <ul class="raiders-news"></ul>    <ul class="raiders-links"><li><a href="http://dnf.qq.com/book2011/gdc/10125/654.shtml" target="_blank"><s class="sprite-icon icon-story"></s>背景故事</a></li><!--<li><a href="#"><s class="sprite-icon icon-wake"></s>初次觉醒</a></li><li><a href="#"><s class="sprite-icon icon-wakeagain"></s>二次觉醒</a></li>--><li><a href="http://dnf.qq.com/v/search.shtml?iType=81" target="_blank"><s class="sprite-icon icon-jobvideo"></s>职业视频</a></li><li><a href="http://dnf.qq.com/raiders/search.shtml?rolejob=8&rolelevel=&type=1" target="_blank"><s class="sprite-icon icon-jobraiders"></s>职业攻略</a></li><li><a href="http://dnf.duowan.com/s/jnmn/nfs.html" target="_blank"><s class="sprite-icon icon-points"></s>加点模拟器</a></li>    </ul></div></div><div class="job-list"><div class="job-name sprite-bg job-name6"><a href="javascript:;">圣职者</a></div><div class="job-info">    <ul class="raiders-news"></ul>    <ul class="raiders-links"><li><a href="http://dnf.qq.com/book2011/gdc/10125/185.shtml" target="_blank"><s class="sprite-icon icon-story"></s>背景故事</a></li><!--<li><a href="#"><s class="sprite-icon icon-wake"></s>初次觉醒</a></li><li><a href="#"><s class="sprite-icon icon-wakeagain"></s>二次觉醒</a></li>--><li><a href="http://dnf.qq.com/v/search.shtml?iType=85" target="_blank"><s class="sprite-icon icon-jobvideo"></s>职业视频</a></li><li><a href="http://dnf.qq.com/raiders/search.shtml?rolejob=4&rolelevel=&type=1" target="_blank"><s class="sprite-icon icon-jobraiders"></s>职业攻略</a></li><li><a href="http://dnf.duowan.com/s/jnmn/szz.html" target="_blank"><s class="sprite-icon icon-points"></s>加点模拟器</a></li>    </ul></div></div><div class="job-list"><div class="job-name sprite-bg job-name7"><a href="javascript:;">女枪手</a></div><div class="job-info">    <ul class="raiders-news"></ul>    <ul class="raiders-links"><li><a href="http://dnf.qq.com/book2011/gdc/10125/1110.shtml" target="_blank"><s class="sprite-icon icon-story"></s>背景故事</a></li><!--<li><a href="#"><s class="sprite-icon icon-wake"></s>初次觉醒</a></li><li><a href="#"><s class="sprite-icon icon-wakeagain"></s>二次觉醒</a></li>--><li><a href="http://dnf.qq.com/v/search.shtml?iType=80" target="_blank"><s class="sprite-icon icon-jobvideo"></s>职业视频</a></li><li><a href="http://dnf.qq.com/raiders/search.shtml?rolejob=5&rolelevel=&type=1" target="_blank"><s class="sprite-icon icon-jobraiders"></s>职业攻略</a></li><li><a href="http://dnf.duowan.com/s/jnmn/nqs.html" target="_blank"><s class="sprite-icon icon-points"></s>加点模拟器</a></li>    </ul></div></div><div class="job-list"><div class="job-name sprite-bg job-name8"><a href="javascript:;">暗夜使者</a></div><div class="job-info">    <ul class="raiders-news"></ul>    <ul class="raiders-links"><li><a href="http://dnf.qq.com/book2011/gdc/10125/181.shtml" target="_blank"><s class="sprite-icon icon-story"></s>背景故事</a></li><!--<li><a href="#"><s class="sprite-icon icon-wake"></s>初次觉醒</a></li><li><a href="#"><s class="sprite-icon icon-wakeagain"></s>二次觉醒</a></li>--><li><a href="http://dnf.qq.com/v/search.shtml?iType=86" target="_blank"><s class="sprite-icon icon-jobvideo"></s>职业视频</a></li><li><a href="http://dnf.qq.com/raiders/search.shtml?rolejob=6&rolelevel=&type=1" target="_blank"><s class="sprite-icon icon-jobraiders"></s>职业攻略</a></li><li><a href="http://dnf.duowan.com/s/jnmn/ndz.html" target="_blank"><s class="sprite-icon icon-points"></s>加点模拟器</a></li>    </ul></div></div><div class="job-list"><div class="job-name sprite-bg job-name9"><a href="javascript:;">格斗家（男）</a></div><div class="job-info">    <ul class="raiders-news"></ul>    <ul class="raiders-links"><li><a href="http://dnf.qq.com/book2011/gdc/10125/1109.shtml" target="_blank"><s class="sprite-icon icon-story"></s>背景故事</a></li><!--<li><a href="#"><s class="sprite-icon icon-wake"></s>初次觉醒</a></li><li><a href="#"><s class="sprite-icon icon-wakeagain"></s>二次觉醒</a></li>--><li><a href="http://dnf.qq.com/v/search.shtml?iType=78" target="_blank"><s class="sprite-icon icon-jobvideo"></s>职业视频</a></li><li><a href="http://dnf.qq.com/raiders/search.shtml?rolejob=7&rolelevel=&type=1" target="_blank"><s class="sprite-icon icon-jobraiders"></s>职业攻略</a></li><li><a href="http://dnf.duowan.com/s/jnmn/ngd.html" target="_blank"><s class="sprite-icon icon-points"></s>加点模拟器</a></li>    </ul></div></div><div class="job-list"><div class="job-name sprite-bg job-name10"><a href="javascript:;">黑暗武士</a></div><div class="job-info">    <ul class="raiders-news"></ul>    <ul class="raiders-links"><li><a href="http://dnf.qq.com/book2011/gdc/10125/1111.shtml" target="_blank"><s class="sprite-icon icon-story"></s>背景故事</a></li><!--<li><a href="#"><s class="sprite-icon icon-wake"></s>初次觉醒</a></li><li><a href="#"><s class="sprite-icon icon-wakeagain"></s>二次觉醒</a></li>--><li><a href="http://dnf.qq.com/v/search.shtml?iType=84" target="_blank"><s class="sprite-icon icon-jobvideo"></s>职业视频</a></li><li><a href="http://dnf.qq.com/raiders/search.shtml?rolejob=9&rolelevel=&type=1" target="_blank"><s class="sprite-icon icon-jobraiders"></s>职业攻略</a></li><li><a href="http://dnf.duowan.com/s/jnmn/dk.html" target="_blank"><s class="sprite-icon icon-points"></s>加点模拟器</a></li>    </ul></div></div><div class="job-list"><div class="job-name sprite-bg job-name11"><a href="javascript:;">缔造者</a></div><div class="job-info">    <ul class="raiders-news"></ul>    <ul class="raiders-links"><li><a href="http://dnf.qq.com/book2011/gdc/10125/1112.shtml" target="_blank"><s class="sprite-icon icon-story"></s>背景故事</a></li><!--<li><a href="#"><s class="sprite-icon icon-wake"></s>初次觉醒</a></li><li><a href="#"><s class="sprite-icon icon-wakeagain"></s>二次觉醒</a></li>--><li><a href="http://dnf.qq.com/v/search.shtml?iType=82" target="_blank"><s class="sprite-icon icon-jobvideo"></s>职业视频</a></li><li><a href="http://dnf.qq.com/raiders/search.shtml?rolejob=10&rolelevel=&type=1" target="_blank"><s class="sprite-icon icon-jobraiders"></s>职业攻略</a></li><li><a href="http://dnf.duowan.com/s/jnmn/dzz.html" target="_blank"><s class="sprite-icon icon-points"></s>加点模拟器</a></li>    </ul></div></div><div class="job-list"><div class="job-name sprite-bg job-name12"><a href="javascript:;">鬼剑士（女）</a></div><div class="job-info">    <ul class="raiders-news"></ul>    <ul class="raiders-links"><li><a href="javascript:alert(\'敬请期待\');"><s class="sprite-icon icon-story"></s>背景故事</a></li><!--<li><a href="#"><s class="sprite-icon icon-wake"></s>初次觉醒</a></li><li><a href="#"><s class="sprite-icon icon-wakeagain"></s>二次觉醒</a></li>--><li><a href="http://dnf.qq.com/v/search.shtml?iType=76" target="_blank"><s class="sprite-icon icon-jobvideo"></s>职业视频</a></li><li><a href="http://dnf.qq.com/raiders/search.shtml?rolejob=11&rolelevel=&type=1" target="_blank"><s class="sprite-icon icon-jobraiders"></s>职业攻略</a></li><li><a href="http://dnf.duowan.com/s/jnmn/ngj.html" target="_blank"><s class="sprite-icon icon-points"></s>加点模拟器</a></li></ul></div></div><div class="job-list"><div class="job-name sprite-bg job-name13"><a href="javascript:;">守护者</a></div><div class="job-info"><ul class="raiders-news"></ul><ul class="raiders-links"><li><a href="javascript:alert(\'敬请期待\');"><s class="sprite-icon icon-story"></s>背景故事</a></li><!--<li><a href="#"><s class="sprite-icon icon-wake"></s>初次觉醒</a></li><li><a href="#"><s class="sprite-icon icon-wakeagain"></s>二次觉醒</a></li>--><li><a href="http://dnf.qq.com/v/search.shtml?iType=120" target="_blank"><s class="sprite-icon icon-jobvideo"></s>职业视频</a></li><li><a href="http://dnf.qq.com/raiders/search.shtml?&rolejob=12&rolelevel=&type=1" target="_blank"><s class="sprite-icon icon-jobraiders"></s>职业攻略</a></li><li><a href="http://dnf.duowan.com/s/jnmn/qs.html" target="_blank"><s class="sprite-icon icon-points"></s>加点模拟器</a></li></ul></div></div></div></div>'
+		dnf.creation("raiders","raiders q",dnf.$$("raiders_html").value);
+		//dnf.loadScript("http://dnf.qq.com/raiders/data/raiders_guanwang_static_data2.js",function(){dnf.getElementsByClassName("job-tab","raiders-news","ul")[0].innerHTML=dnf.initJobNews.initJob('0')});
+		//dnf.loadScript("http://dnf.qq.com/raiders/data/raiders_guanwang_static_data2.js",function(){dnf.getElementsByClassName("job-tab","raiders-news","ul")[0].innerHTML=dnf.initJobNews.initJob('0');});
+		//var jobTab=new dnf.slide("job-tab","job-list","div","job-info",{showF:true,event:"click",onFinish:dnf.JobNewsCallback});
+		var jobTab=new dnf.slide("job-tab","job-list","div","job-info",{showF:true,event:"click",onFinish:dnf.JobNewsCallback});
+	}
+
+	dnf.setJobNews=function(){
+		dnf.creation("raiders_news","box q",'<div class="modle-tit"><div class="modle-tit-more"><a href="http://dnf.qq.com/raiders/" target="_blank">更多 <s class="sprite-icon icon-more"></s></a></div><s class="sprite-icon icon-tit"></s><s class="sprite-icon icon-tit-media"></s></div><div class="raiders-news-clear"><ul class="raiders-news raiders-news-mt" id="raiders-news-mt"><!--#include virtual="/webplat/info/news_version3/119/26223/m17080/index.shtml"--></ul><div class="modle-tit-more"><a href="http://dnf.qq.com/webplat/info/news_version3/119/26223/m17081/list_1.shtml" target="_blank">更多 <s class="sprite-icon icon-more"></s></a></div></div><ul class="raiders-gg" delayLoad="dnf.delayLoad.raiders();"><li id="raidersGg1"></li><li id="raidersGg2"></li><li id="raidersGg3"></li><li id="raidersGg4"></li></ul>');
+		dnf.loadScript("http://dnf.qq.com/webplat/info/news_version3/119/26223/m17080/index.js",function(){dnf.$$("raiders-news-mt").innerHTML=dnf.initJobNews.initNewsMedia();});
+	}
+
+	dnf.setGameGuide=function(){
+		dnf.creation("guide_box","guide_box",dnf.$$("guide_html").value);
+	}
+	dnf.showImg=function(o){
+		dnf.showImgUrl=o.href;
+		dnf.loadScript("http://ossweb-img.qq.com/images/js/comm/showDialog.min.js",function(){
+			dnf.$$("showImg").src=dnf.showImgUrl;
+			showDialog.show({id:"showImgbox",bgcolor:"#000",opacity:60});
+		});
+	}
+	dnf.setAct=function(){
+		dnf.loadScript("http://dnf.qq.com/commActCale/act_cale_info.js",function(){
+			var index=0,act_nav=dnf.$$('act_nav').getElementsByTagName('li');
+			for(i=0;i<act_nav.length;i++){
+				act_nav[i].onclick=(function(num){
+					return function(){
+						act_nav[index].className="";
+						index=num;
+						act_nav[num].className="cur";
+
+						//if(dnf.actAdsHtml == null){
+						//	dnf.actAdsHtml = dnf.$$("act_list").innerHTML;
+						//}
+
+						switch(num){
+							case 0:
+							//dnf.hotActList();
+							//dnf.$$("act_list").innerHTML = dnf.actAdsHtml;
+							dnf.intActList(5);
+							break
+							case 1:
+							dnf.intActList(0);
+							break
+							case 2:
+							dnf.intActList(1);
+							break
+							case 3:
+							dnf.intActList(2);
+							break
+							case 4:
+							dnf.intActList(3);
+							break
+							case 5:
+							dnf.intActList(4);
+							break
+							case 6:
+							alert(7)
+							break
+						}
+						return false;
+					}
+				})(i)
+			}
+
+		});
+		//dnf.hotActList();
+		dnf.intActList(5);
+	}
+	dnf.setChapter=function(){
+		dnf.creation("chapter","chapter",'<div class="modle-tit"><div class="modle-tit-more"><a href="/webplat/info/news_version3/119/495/14251/m394/list_1.shtml" target="_blank">更多 <s class="sprite-icon icon-more"></s></a></div><s class="sprite-icon icon-tit"></s><s class="sprite-icon icon-tit-chapter"></s></div>					<div class="chapter-list"><div class="chapter-line"></div><ul id="chapter-list"></ul></div>');
+		dnf.loadScript("/web2015/js/data.js",function(){dnf.selectWeek();dnf.initChapter('over');dnf.initChapter('online');});
+	}
+	dnf.initNovel=function(n){
+		var html="<ul>";
+		for(var i=0;i<5;i++){
+				html+='<li><a href="'+decodeURI(newsIndexData[i].infoPath)+'" target="_blank">['+decodeURI(newsIndexData[i].sTypeName)+'] '+decodeURI(newsIndexData[i].sTitle)+'</a></li>';
+		};
+		document.getElementsByClassName("novel-list")[n].innerHTML=html+'</ul>';
+		};
+	dnf.initEventNews=function(n){
+		var html="<ul>";
+		for(var i=0;i<7;i++){
+				html+='<li'+(i==0?'class="news-hot"':'')+'><a href="'+decodeURI(newsIndexData[i].infoPath)+'" target="_blank">['+decodeURI(newsIndexData[i].sTypeName)+'] '+decodeURI(newsIndexData[i].sTitle)+'</a></li>';
+		};
+		document.getElementsByClassName("event-info")[n].innerHTML=html+'</ul>';
+		};
+
+	dnf.setNovel=function(){
+		dnf.creation("brand","brand q",dnf.$$("brand_html").value);
+		new dnf.tabs("novel-tab", "tab-panel");
+
+	}
+	dnf.setZone=function(){
+		dnf.creation("zone","box q",dnf.$$("zone_html").value);
+		dnf.loadScript("http://dnf.gamebbs.qq.com/api.php?mod=js&bid=24-20-23-21-22",function(){
+			var index=0,zoneNav=dnf.$$('zone_nav').getElementsByTagName('li');
+			for(var i=0;i<zoneNav.length;i++){
+				zoneNav[i].onclick=(function(num){
+					return function(){
+						zoneNav[index].className="";
+						index=num;
+						zoneNav[num].className="cur";
+						switch(num){//热门(24) 综合区(20) 文化志(23)  体验服(21)  酒馆(22)
+							case 0:
+							dnf.getZone(24);
+							break
+							case 1:
+							dnf.getZone(20);
+							break
+							case 2:
+							dnf.getZone(23);
+							break
+							case 3:
+							dnf.getZone(21);
+							break
+							case 4:
+							dnf.getZone(22);
+							break
+						}
+						return false;
+					}
+				})(i)
+			}
+			dnf.getZone(24);
+		});
+
+	};
+	dnf.getZone=function(TypeId){
+	var bbsHTML="",_s=1;
+	for(var i=0;i<block_fetch_content.length;i++){
+		if(block_fetch_content[i].bid==TypeId){
+			bbsHTML+='<li><em class="sprite-icon n'+_s+'">'+_s+'</em><a href="'+block_fetch_content[i].href+'" target="_blank">'+decodeURIComponent(block_fetch_content[i].title)+'</a></li>';
+			_s++;
+		}
+		if(_s>5){
+			break;
+		}
+	}
+
+	dnf.$$('zone_list').innerHTML=bbsHTML;
+
+	};
+	dnf.setEventNews=function(){
+		dnf.creation("event","event",dnf.$$("event_html").value);
+		//new dnf.tabs("novel-tab", "tab-panel");
+		new dnf.tabs("event-tab", "tab-panel",{event:"click"});
+		/*dnf.loadScript("http://dnf.qq.com/webplat/info/news_version3/119/499/14605/m389/index.js",function(){
+			dnf.initEventNews(0);
+		});
+		dnf.loadScript("http://dnf.qq.com/webplat/info/news_version3/119/499/18227/m389/index.js",function(){
+			dnf.initEventNews(1);
+		});
+		dnf.loadScript("http://dnf.qq.com/webplat/info/news_version3/119/499/501/m389/index.js",function(){
+			dnf.initEventNews(2);
+		});
+		dnf.loadScript("http://dnf.qq.com/webplat/info/news_version3/119/499/502/m389/index.js",function(){
+			dnf.initEventNews(3);
+		});*/
+	}
+
+
+
+	dnf.gg=function(ids,hgt,pgv){
+		var gg = "<div class='adPic'><ul id='expGg'>",
+		at = "main.rotate.",
+		gs = "",
+		len = ids.length - 1,
+		pos = oDaTaNew11370,
+		src = "http:\/\/ossweb-img.qq.com\/upload\/adw\/",
+		sg = dnf.$$(ids[len]),
+		nn = 0,
+		spd = 5000;
+		for (var i = 0; i < len; i++) {
+			if(ids[i] == 'idataAdPos1'){
+
+				gg += '<li><a href="#" data-TGAD="11370,11390" onclick="pgvSendClick({hottag:\'' + at + pgv + '' + (i + 1) + '\'});"></a></li>';
+			}else if(ids[i] == 'idataAdPos2'){
+
+				gg += '<li><a href="#" data-TGAD="11370,11391" onclick="pgvSendClick({hottag:\'' + at + pgv + '' + (i + 1) + '\'});"></a></li>';
+			}else if(ids[i] == 'idataAdPos3'){
+
+				gg += '<li><a href="#" data-TGAD="11370,11392" onclick="pgvSendClick({hottag:\'' + at + pgv + '' + (i + 1) + '\'});"></a></li>';
+			}else if(ids[i] == 'idataAdPos4'){
+
+				gg += '<li><a href="#" data-TGAD="11370,11393" onclick="pgvSendClick({hottag:\'' + at + pgv + '' + (i + 1) + '\'});"></a></li>';
+			}else if(ids[i] == 'idataAdPos5'){
+
+				gg += '<li><a href="#" data-TGAD="11370,11394" onclick="pgvSendClick({hottag:\'' + at + pgv + '' + (i + 1) + '\'});"></a></li>';
+			}else if(ids[i] == 'idataAdPos6'){
+
+				gg += '<li><a href="#" data-TGAD="11370,11395" onclick="pgvSendClick({hottag:\'' + at + pgv + '' + (i + 1) + '\'});"></a></li>';
+			}else{
+				//gg += '<li><a href="' + pos["pos" + ids[i]][1] + '" target="_blank" onclick="pgvSendClick({hottag:\'' + at + pgv + '' + (i + 1) + '\'});"><img src="' + src + pos["pos" + ids[i]][2] + '" alt="" /></a></li>';
+				gg += '<li><a href="#" data-TGAD="11370,11396" onclick="pgvSendClick({hottag:\'' + at + pgv + '' + (i + 1) + '\'});"></a></li>';
+			}
+
+			gs += '<li class="ad-btn' + (i + 1) + '"><span></span></li>';
+		};
+		gg += '</ul></div>';
+		gg += '<ul class="ad-icon sprite-icon">' + gs + '</ul>';
+		sg.innerHTML = gg;
+
+		var sgul = sg.getElementsByTagName("div")[0],
+		num = sg.getElementsByTagName("span"),
+		chg = function(ag1, ag2, ag3) {
+			sgul.style.marginTop = 0 - ag1 * hgt + "px";
+			nn == ag2 ? num[len - 1].className = "": num[ag3].className = "";
+			num[ag1].className += " on";
+		};
+		chg(0, 0, 1);
+		var auto = function() {
+			if (document.all) {
+				sg.style.filter = "revealTrans(duration=1,transition=23)";
+				var flt = sg.filters.revealTrans;
+				flt.Transition = 23;
+				flt.apply();
+				flt.play();
+			};
+			nn > len - 2 ? nn = 0 : nn++;
+			chg(nn, 0, nn - 1);
+		};
+		var stt = function() {
+			sgul.move = setInterval(auto, spd);
+		},
+		end = function() {
+			clearInterval(sgul.move);
+		};
+		for (var i = 0; i < len; i++) {
+			num[i].cnt = i;
+			num[i].onmouseover = function() {
+				end();
+				chg(this.cnt, -1, nn);
+				nn = this.cnt;
+				//pgvSendClick({
+					//hottag: at + pgv + ".icon" + (nn + 1)
+				//});
+			};
+			num[i].onmouseout = stt;
+		};
+		sgul.onmouseover = end;
+		sgul.onmouseout = stt;
+		stt();
+	};
+	dnf.DateDiff=function(endTime) {
+		var startTime=new Date().toGMTString();
+		startTime = startTime.replace(/\-/g, "/");
+		endTime = endTime.replace(/\-/g, "/");
+		var sTime = new Date(startTime),eTime = new Date(endTime),iDays = 0;
+		if(sTime>eTime){
+			iDays="已结束";
+		}else{
+			var hour=parseInt((eTime.getTime() - sTime.getTime()) / parseInt(1000 * 3600))
+			if(parseInt((eTime.getTime() - sTime.getTime()) / parseInt(1000 * 3600 * 24))==0){
+				iDays="<b>"+hour+"</b>"+"小时后结束";
+			}else{
+				iDays="<b>"+parseInt((eTime.getTime() - sTime.getTime()) / parseInt(1000 * 3600 * 24))+"</b>"+"天后结束";
+			}
+		}
+	   return iDays;
+	};
+	dnf.single = function(ids, pgv) {
+		var len = ids.length - 1,
+		pos = oDaTaNew11370,
+		src = "http:\/\/ossweb-img.qq.com\/upload\/adw\/",
+		act_time = dnf.DateDiff(pos["pos" + ids[0]][11]);
+		dnf.$$(ids[len]).innerHTML = '<a href="' + pos["pos" + ids[0]][1] + '" target="_blank" onclick="pgvSendClick({hottag:\'main.' + pgv + '\'});"><img src="' + src + pos["pos" + ids[0]][2] + '" alt="" /></a><p class="gg-time">' + act_time + '</p>';
+	};
+	dnf.report=function(n){
+		var d1 = new Date(),
+        imgSendTimePoint = new Image();
+        var url = "http://isdspeed.qq.com/cgi-bin/r.cgi?flag1=7718&flag2=28&flag3=2&" + n + "=" + (d1 - d0);
+        if (Math.random() < 0.3) {
+            imgSendTimePoint.src = url
+        }
+	};
+	dnf.count=function(){if (typeof(pgvMain) == 'function') pgvMain()};
+	dnf.getCookie = function(c_name) {
+		if (document.cookie.length > 0) {
+			var c_start = document.cookie.indexOf(c_name + "=");
+			if (c_start != -1) {
+				c_start = c_start + c_name.length + 1;
+				var c_end = document.cookie.indexOf(";", c_start);
+				if (c_end == -1) {
+					c_end = document.cookie.length
+				}
+				return unescape(document.cookie.substring(c_start, c_end))
+			}
+		}
+		return ""
+	};
+	dnf.setCookie = function(c_name, value, expiredays) {
+		var exdate = new Date();
+		exdate.setDate(exdate.getDate() + expiredays);
+		document.cookie = c_name + "=" + escape(value) + ((expiredays == null) ? "": "; expires=" + exdate.toGMTString())
+	};
+	dnf.userInfo=function(name){//user_time 头部新闻 user_gl_time 攻略
+		if(name=="user_time"){
+			if(!dnf.getCookie(name)){
+				var myDate=new Date(),userTime=myDate.getTime();
+				dnf.setCookie(name,userTime,86400);
+				//dnf.guide.init();
+			}else{
+				var userTime = dnf.getCookie(name);
+			};
+		}else if(name=="user_gl_time"){
+			var myDate=new Date(),userTime=dnf.setTime();
+			dnf.setCookie(name,userTime,86400);
+		}
+		//console.log(name)
+		return userTime
+	};
+	dnf.countPush=function(jsUrl,id){
+		dnf.loadScript(jsUrl,function(){
+			var a=[],b=0,nowTime=new Date().getTime();
+			for(var i=0;i<7;i++){
+				if(i==1){return}
+				var newsTime=newsIndexData[i].dtReleaseTime_org.replace(/\-/g, "/");
+				if(dnf.userInfo("user_time")<new Date(newsTime).getTime()){
+					b++;
+					if(b>7){
+						b=7
+					}
+				}else{}
+				if(b==0){
+				dnf.$$(id).style.display="none";
+			}else{
+					dnf.$$(id).style.display="block";
+					dnf.$$(id).className+=" icon-push"+b;
+				};
+			};
+
+		});
+	};
+	dnf.setTime=function(){
+		var day=new Date().getDate();
+		var month=new Date().getMonth()+1;
+		if(month<10){
+			month="0"+month;
+		};
+		if(day<10){
+			day="0"+day;
+		}
+		return month+"/"+day;
+	}
+	dnf.updataRaidersNum=function(jsUrl,id){
+		if(dnf.getCookie("user_gl_time")==dnf.setTime()){
+			dnf.$$(id).className+=" looked";
+		}
+		dnf.loadScript(jsUrl,function(){
+			var b=0;
+			for(var i=0;i<newsIndexData.length;i++){
+				var newsTime=newsIndexData[i]["dtReleaseTime"];
+				if(newsTime==dnf.setTime()){
+					b++;
+				}else{}
+			}
+			if(b==0){
+				dnf.$$(id).style.display="none";
+			}else{
+				dnf.$$(id).style.display="block";
+				dnf.$$(id).innerHTML=b;
+			};
+		});
+	};
+	dnf.showUpdataNum=function(){
+		var newsJs=["http://dnf.qq.com/webplat/info/news_version3/119/26208/26209/m17080/index.js",
+			"http://dnf.qq.com/webplat/info/news_version3/119/26208/26216/m17080/index.js",
+			"http://dnf.qq.com/webplat/info/news_version3/119/26208/26213/m17080/index.js",
+			"http://dnf.qq.com/webplat/info/news_version3/119/26208/26211/m17080/index.js",
+			"http://dnf.qq.com/webplat/info/news_version3/119/26208/26212/m17080/index.js",
+			"http://dnf.qq.com/webplat/info/news_version3/119/26208/26219/m17080/index.js",
+			"http://dnf.qq.com/webplat/info/news_version3/119/26208/26214/m17080/index.js",
+			"http://dnf.qq.com/webplat/info/news_version3/119/26208/26217/m17080/index.js",
+			"http://dnf.qq.com/webplat/info/news_version3/119/26208/26215/m17080/index.js",
+			"http://dnf.qq.com/webplat/info/news_version3/119/26208/26221/m17080/index.js",
+			"http://dnf.qq.com/webplat/info/news_version3/119/26208/26222/m17080/index.js",
+			"http://dnf.qq.com/webplat/info/news_version3/119/26208/26210/m17080/index.js",
+			"http://dnf.qq.com/webplat/info/news_version3/119/26208/26220/m17080/index.js",
+			"http://dnf.qq.com/webplat/info/news_version3/119/26208/26218/m17080/index.js",
+		];
+		for(var i=0;i<14;i++){
+			dnf.updataRaidersNum(newsJs[i],"updataNum"+(i+1));
+		}
+	}
+	dnf.showTopUpdataNum=function(){
+		dnf.updataRaidersNum("http://dnf.qq.com/webplat/info/news_version3/119/26208/m17080/index.js","icon-raider");
+	};
+	dnf.replaceCookie=function(n, index, panel){
+		var nowTime=new Date().getTime();
+		dnf.$$('news-tab').getElementsByTagName('span')[n].style.display="none";
+		dnf.setCookie("user_time",nowTime,86400);
+		dnf.firstNews("news-tab",n);
+	};
+	dnf.scroller={
+		intval: function(v) {
+			v = parseInt(v);
+			return isNaN(v) ? 0 : v
+		},
+		getPos: function(e) {
+			var l = 0;
+			var t = 0;
+			var w = dnf.scroller.intval(e.style.width);
+			var h = dnf.scroller.intval(e.style.height);
+			var wb = e.offsetWidth;
+			var hb = e.offsetHeight;
+			while (e.offsetParent) {
+				l += e.offsetLeft + (e.currentStyle ? dnf.scroller.intval(e.currentStyle.borderLeftWidth) : 0);
+				t += e.offsetTop + (e.currentStyle ? dnf.scroller.intval(e.currentStyle.borderTopWidth) : 0);
+				e = e.offsetParent
+			}
+			l += e.offsetLeft + (e.currentStyle ? dnf.scroller.intval(e.currentStyle.borderLeftWidth) : 0);
+			t += e.offsetTop + (e.currentStyle ? dnf.scroller.intval(e.currentStyle.borderTopWidth) : 0);
+			return {
+				x: l,
+				y: t,
+				w: w,
+				h: h,
+				wb: wb,
+				hb: hb
+			}
+		},
+		getScroll: function() {
+			var t, l, w, h;
+			if (document.documentElement && document.documentElement.scrollTop) {
+				t = document.documentElement.scrollTop;
+				l = document.documentElement.scrollLeft;
+				w = document.documentElement.scrollWidth;
+				h = document.documentElement.scrollHeight
+			} else if (document.body) {
+				t = document.body.scrollTop;
+				l = document.body.scrollLeft;
+				w = document.body.scrollWidth;
+				h = document.body.scrollHeight
+			}
+			return {
+				t: t,
+				l: l,
+				w: w,
+				h: h
+			}
+		},
+		clearScroll:function(){
+			window.clearInterval(this.timer);
+			this.timer = null
+		},
+		init: function(el, duration) {
+			if (typeof el != 'object') {
+				el = document.getElementById(el)
+			}
+			if (!el) return;
+			var z = this;
+			z.el = el;
+			z.p = dnf.scroller.getPos(el);
+			z.s = dnf.scroller.getScroll();
+			z.clear = function() {
+				window.clearInterval(z.timer);
+				z.timer = null
+			};
+			z.t = (new Date).getTime();
+			z.step = function() {
+				var t = (new Date).getTime();
+				var p = (t - z.t) / duration;
+				if (t >= duration + z.t) {
+					z.clear();
+					window.setTimeout(function() {
+						z.scroll(z.p.y, z.p.x)
+					},
+					13)
+				} else {
+					st = (( - Math.cos(p * Math.PI) / 2) + 0.5) * (z.p.y - z.s.t) + z.s.t;
+					sl = (( - Math.cos(p * Math.PI) / 2) + 0.5) * (z.p.x - z.s.l) + z.s.l;
+					z.scroll(st, sl)
+				}
+			};
+			z.scroll = function(t, l) {
+				window.scrollTo(l, t)
+			};
+			z.timer = window.setInterval(function() {
+				z.step()
+			},
+			13)
+		}
+	};
+	/*dnf.scrollElent=function(){
+		var elent=["week-act","video","brand","raiders","chapter","event"],elentLinks=dnf.$$("nav-fixed").getElementsByTagName("a");
+		//dnf.scroller.init('week-act',800);
+		for (var i = 0; i < elentLinks.length; i++) {
+		(function(index, that) {
+				dnf.addEventSimple(elentLinks[index], "click",
+				function() {
+				dnf.scroller.clearScroll();
+					var t = setTimeout(function() {
+						dnf.scroller.init(elent[index],800)
+					},100);
+				});
+			})(i, this)
+		}
+
+	};*/
+	dnf.tabs=function(id, cls, options){
+		this.trigger = dnf.$$(id).getElementsByTagName("ul")[0].getElementsByTagName("li");
+		this.count = this.trigger.length;
+		this._id = id;
+		this.panel = dnf.getElementsByClassName(id, cls);
+		this.slider = dnf.getElementsByClassName(id, "bd")[0];
+		this.t = null;
+		this.index = 0;
+		this.setOptions(options);
+		this.onStart = this.options.onStart;
+		this.event = this.options.event;
+		this.timeout = this.options.timeout;
+		this.onFinish = this.options.onFinish;
+		this.init()
+	};
+	dnf.tabs.prototype={
+		init: function() {
+			this.trigger[0].className += " " + this.options.currCls;
+			this.panel[0].className += " " + this.options.disCls;
+			for (var i = 0; i < this.count; i++) { (function(index, that) {
+					dnf.addEventSimple(that.trigger[index], that.options.event,
+					function() {
+						that.t = setTimeout(function() {
+							that.switchTo(index)
+						},
+						that.timeout)
+					});
+					if (that.options.event == "mouseover") {
+						dnf.addEventSimple(that.trigger[index], "mouseout",
+						function() {
+							that.ct(that.t)
+						})
+					}
+				})(i, this)
+			}
+		},
+		setOptions: function(options) {
+			this.options = {
+				timeout: 60,
+				currCls: "cur",
+				disCls: "dis",
+				event: "mouseover",
+				onFinish: function() {},
+				animation: null
+			};
+			dnf.Extend(this.options, options || {})
+		},
+		switchTo: function(n) {
+			if (this.index == n) {
+				return
+			} else {
+				this.trigger[this.index].className = this.trigger[this.index].className.replace(this.options.currCls, "");
+				this.panel[this.index].className = this.panel[this.index].className.replace(this.options.disCls, "")
+			};
+			this.trigger[n].className += " " + this.options.currCls;
+			if (this.options.animation) {
+				this.options.animation(n, this.slider)
+			} else {
+				this.panel[n].className += " " + this.options.disCls
+			}
+			if (this.onFinish) {
+				this.onFinish(n, this.panel[n], this._id)
+			}
+			this.index = n
+		},
+		ct: function() {
+			clearTimeout(this.t)
+		}
+	};
+	dnf.fillTmpl=function(d){
+		var str = '<div class="tab-panel"><ul>',o = dnf.$$('shop-list'),d_length=d.length;
+		for (var i = 0; i < d_length; i++) {
+			d[i].iSale = Math.ceil((d[i].iPrice / d[i].iOrgPrice) * 10);
+			str +='<li><p class="shop-img"><a href="http://daoju.qq.com/dnf/item/' + d[i].iSeqId + '.shtml?ADTAG=gwtj.rec.cf" target="_blank"><img width="50" height="50" src="' + d[i].sGoodsPic + '"></a><div class="shop-info"><p class="shop-text">'+d[i].sGoodsName+'</p><p class="shop-money">'+d[i].iPrice+'点券</p><a href="#" class="shop-btn" iseqid="'+d[i].iSeqId+'">立即购买</a></div></li>'
+			if (i != (d_length - 1) && (i + 1) % 3 == 0) {
+                str += '</ul></div><div class="tab-panel"><ul>';
+            }
+        }
+        str += "</ul></div>";
+		o.innerHTML = str;
+		new dnf.slide("shop-tab","shop-hd-i","li","tab-panel",{showF:true});
+		$("#shop-list .shop-btn").click(function() {
+            var _id = $(this).attr("iseqid");
+            var _cur_goods = D.recact.recMap[_id];
+            var _other_recs = $.extend({},
+            D.recact.recMap);
+            var _page = $("#shop-list").children(".tab-panel").index($(this).parents(".tab-panel")) + 1;
+            var _place = $(this).parents("ul").children("li").index($(this).parents("li")) + 1;
+            delete _other_recs[_id];
+            //启动order组件@上报参数制定
+            need(["daoju.hx.order"],
+            function(order) {
+                //如果不进行购买上报可不调用init方法，一般情况是需要上报的
+                order.init({
+                    biz: D.recact.option.biz,
+                    //业务cf
+                    scene_id: D.recact.option.scene_id,
+                    //上报类型
+                    place: _place,
+                    //每一组的第几个为
+                    page: _page,
+                    //第几组
+                    uin: D.recact.reportOption.uin,
+                    //用户qq
+                    recommend_id: D.recact.reportOption.recommend_id
+                    //推荐id
+                });
+                order.buy(_cur_goods);
+            });
+            return false;
+        });
+	};
+	dnf.slide=function(id, cls1,tag,cls2, options){
+		this.trigger = dnf.getElementsByClassName(id,cls1,tag);
+		this.count = this.trigger.length;
+		this._id = id;
+		this._cls1=cls1;
+		this._cls2=cls2;
+		this.panel = dnf.getElementsByClassName(id, cls2);
+		this.slider = dnf.getElementsByClassName(id, "bd")[0];
+		this.t = null;
+		this.index = 0;
+		this.setOptions(options);
+		this.onStart = this.options.onStart;
+		this.event = this.options.event;
+		this.timeout = this.options.timeout;
+		this.onFinish = this.options.onFinish;
+		this.showF=this.options.showF;
+		this.hide=this.options.hide;
+		this.init()
+	};
+	dnf.slide.prototype={
+		init: function() {
+		//console.log(this._id+this.panel.length)
+		if(this.showF){
+			this.trigger[0].className += " " + this.options.currCls;
+			this.panel[0].className += " " + this.options.disCls;
+		}
+			for (var i = 0; i < this.count; i++) { (function(index, that) {
+					dnf.addEventSimple(that.trigger[index], that.options.event,
+					function() {
+						that.t = setTimeout(function() {
+							that.switchTo(index)
+						},
+						that.timeout)
+					});
+					if (that.options.event == "mouseenter" && that.options.hide) {
+						dnf.addEventSimple(dnf.$$(that._id), "mouseleave",
+						function() {
+							that.ct(that.t);
+							that.mo(index);
+						})
+					}
+				})(i, this)
+			}
+		},
+		setOptions: function(options) {
+			this.options = {
+				timeout: 60,
+				currCls: "cur",
+				disCls: "dis",
+				event: "mouseenter",
+				onFinish: function() {},
+				animation: null
+			};
+			dnf.Extend(this.options, options || {})
+		},
+		switchTo: function(n) {
+			if (this.showF && this.index == n) {
+				return
+			} else {
+				this.trigger[this.index].className = this.trigger[this.index].className.replace(this.options.currCls, "");
+				this.panel[this.index].className = this.panel[this.index].className.replace(this.options.disCls, "")
+			};
+			this.trigger[n].className += " " + this.options.currCls;
+			if (this.options.animation) {
+				this.options.animation(n, this.slider)
+			} else {
+				this.panel[n].className += " " + this.options.disCls
+			}
+			if (this.onFinish) {
+				this.onFinish(n, this.panel[n], this._id)
+			}
+			this.index = n
+		},
+		ct: function() {
+				clearTimeout(this.t)
+		},
+		mo:function(o){
+			this.trigger[this.index].className=this._cls1;
+			this.panel[this.index].className=this._cls2;
+			this.index =o=0
+		}
+	};
+	dnf.corp = function() {
+		var corp = dnf.$$("teamwork-select"),
+		corp_h = corp.getElementsByTagName("h3")[0],
+		corp_list = corp.getElementsByTagName("ul")[0];
+		corp_h.onmouseover = corp_list.onmouseover = function() {
+			corp_list.style.display = "block";
+		};
+		corp_h.onmouseout = corp_list.onmouseout = function() {
+			corp_list.style.display = "none";
+		};
+	};
+	dnf.delayLoad={
+		"event":function(){
+			dnf.single(["11063","eventGg1"],"single.event1");
+			dnf.single(["11064","eventGg2"],"single.event2");
+			dnf.single(["11065","eventGg3"],"single.event3");
+			dnf.loadScript('http://dnf.qq.com/webplat/info/news_version3/119/14452/m313/index.js',function(){dnf.initEventLive()});
+		},
+		"raiders":function(){
+			dnf.single(["11059","raidersGg1"],"single.raiders1");
+			dnf.single(["11060","raidersGg2"],"single.raiders2");
+			dnf.single(["11061","raidersGg3"],"single.raiders3");
+			dnf.single(["11062","raidersGg4"],"single.raiders4");
+		},
+		"brand":function(){
+			dnf.single(["11054","brandGg1"],"single.brand1");
+			dnf.single(["11055","brandGg2"],"single.brand2");
+			dnf.single(["17142","novelGg3"],"single.novel3");
+			dnf.single(["11056","novelGg2"],"single.novel2");
+			dnf.single(["11057","novelGg1"],"single.novel1");
+			dnf.single(["11058","cartoonGg"],"single.cartoon");
+			//dnf.$$("novelGg3").getElementsByTagName("a")[0].setAttribute("href","http://www.qidian.com/Book/1003683523.aspx");//重写最后一个使徒链接
+		},
+		"dnfGirl":function(){
+			dnf.single(["13297","dnfgirl_1"],"single.dnfgirl1");
+			dnf.single(["13298","dnfgirl_2"],"single.dnfgirl2");
+			dnf.single(["13299","dnfgirl_3"],"single.dnfgirl2");
+		}
+	};
+	dnf.actList=["","","","","",""];
+
+	dnf.intActList=function(n){
+		dnf.loadScript("http://dnf.qq.com/commActCale/act_cale_info.js", function(){
+			var list=[0,0,0,0,0,0];
+			if(dnf.actList[n]==""){
+				for(var i=1;i<CommActCaleData.list.length;i++){//console.log(i);
+					if(list[0]==4&&list[1]==4&&list[2]==4&&list[3]==4&&list[4]==4){
+						break;
+					}
+
+					if(list[0]<4&&CommActCaleData.list[i][23]=="新手"){
+						dnf.actList[0]+='<li'+(list[0]==3?' class="act-o"':'')+'><a href="'+decodeURIComponent(CommActCaleData.list[i][17])+'" target="_blank" onclick="pgvSendClick({hottag:\'main.single.adggs2_'+list[0]+'\'});"><img src="'+decodeURIComponent(CommActCaleData.list[i][18])+'" alt=""></a><p class="gg-time">'+dnf.DateDiff(new Date(parseInt(CommActCaleData.list[i][2])*1000).toGMTString())+'</p></li>';
+						list[0]++
+					}
+					if(list[1]<4&&CommActCaleData.list[i][23]=="活跃"){
+						dnf.actList[1]+='<li'+(list[1]==3?' class="act-o"':'')+'><a href="'+decodeURIComponent(CommActCaleData.list[i][17])+'" target="_blank" onclick="pgvSendClick({hottag:\'main.single.adggs3_'+list[1]+'\'});"><img src="'+decodeURIComponent(CommActCaleData.list[i][18])+'" alt=""></a><p class="gg-time">'+dnf.DateDiff(new Date(parseInt(CommActCaleData.list[i][2])*1000).toGMTString())+'</p></li>';
+						list[1]++
+					}
+					if(list[2]<4&&CommActCaleData.list[i][23]=="付费"){
+						dnf.actList[2]+='<li'+(list[2]==3?' class="act-o"':'')+'><a href="'+decodeURIComponent(CommActCaleData.list[i][17])+'" target="_blank" onclick="pgvSendClick({hottag:\'main.single.adggs4_'+list[2]+'\'});"><img src="'+decodeURIComponent(CommActCaleData.list[i][18])+'" alt=""></a><p class="gg-time">'+dnf.DateDiff(new Date(parseInt(CommActCaleData.list[i][2])*1000).toGMTString())+'</p></li>';
+						list[2]++
+					}
+					if(list[3]<4&&CommActCaleData.list[i][14]=="6"){
+						dnf.actList[3]+='<li'+(list[3]==3?' class="act-o"':'')+'><a href="'+decodeURIComponent(CommActCaleData.list[i][17])+'" target="_blank" onclick="pgvSendClick({hottag:\'main.single.adggs5_'+list[3]+'\'});"><img src="'+decodeURIComponent(CommActCaleData.list[i][18])+'" alt=""></a><p class="gg-time">'+dnf.DateDiff(new Date(parseInt(CommActCaleData.list[i][2])*1000).toGMTString())+'</p></li>';
+						list[3]++
+					}
+					if(list[4]<4&&CommActCaleData.list[i][14]=="7"){
+						dnf.actList[4]+='<li'+(list[4]==3?' class="act-o"':'')+'><a href="'+decodeURIComponent(CommActCaleData.list[i][17])+'" target="_blank" onclick="pgvSendClick({hottag:\'main.single.adggs6_'+list[4]+'\'});"><img src="'+decodeURIComponent(CommActCaleData.list[i][18])+'" alt=""></a><p class="gg-time">'+dnf.DateDiff(new Date(parseInt(CommActCaleData.list[i][2])*1000).toGMTString())+'</p></li>';
+						list[4]++
+					}
+					if(list[5]<4&&CommActCaleData.list[i][14]=="1"&&dnf.DateDiff(new Date(parseInt(CommActCaleData.list[i][2])*1000).toGMTString())!=="已结束"){
+						dnf.actList[5]+='<li'+(list[5]==3?' class="act-o"':'')+'><a href="'+decodeURIComponent(CommActCaleData.list[i][17])+'" target="_blank" onclick="pgvSendClick({hottag:\'main.single.adggs1_'+list[5]+'\'});"><img src="'+decodeURIComponent(CommActCaleData.list[i][18])+'" alt=""></a><p class="gg-time">'+dnf.DateDiff(new Date(parseInt(CommActCaleData.list[i][2])*1000).toGMTString())+'</p></li>';
+						list[5]++
+					}
+
+				}
+			}
+			dnf.$$("act_list").innerHTML=dnf.actList[n];
+			//console.log(dnf.actList[5])
+		})
+	}
+	dnf.hotActList=function(){
+		/*
+		dnf.loadScript("http://game.qq.com/time/qqadv/Info_new_11370.js?v=1396405468022", function() {
+
+			dnf.$$("act_list").innerHTML='<li id="adggs0"></li><li id="adggs1"></li><li id="adggs2"></li><li id="adggs3" class="act-o"></li>'
+			dnf.single(["11397", "adggs0"], "single.adggs1");
+			dnf.single(["11398", "adggs1"], "single.adggs2");
+			dnf.single(["11399", "adggs2"], "single.adggs3");
+			dnf.single(["11400", "adggs3"], "single.adggs4");
+		}) */
+
+		var idataInnerHTML = '<li class="time-show"><a href="#" data-TGAD="11370,11397"></a></li>';
+		idataInnerHTML += '<li class="time-show"><a href="#" data-TGAD="11370,11398"></a></li>';
+		idataInnerHTML += '<li class="time-show"><a href="#" data-TGAD="11370,11399"></a></li>';
+		idataInnerHTML += '<li class="act-o time-show"><a href="#" data-TGAD="11370,11400"></a></li>';
+
+		dnf.$$("act_list").innerHTML=idataInnerHTML;
+	}
+
+	dnf.tgaVideo=function(){
+		dnf.loadScript("http://dnf.qq.com/act/dnfliveinfo/liveinfo.js",function(){//http://dnf.qq.com/act/dnfliveinfo/liveinfo.js
+			var liveData=DNF_OFFICIAL_LIVEINFO.data,liveItem=liveData.items,liveItemLength=liveItem.length,liveItemCon="";
+			if (typeof(liveItemLength) != 'undefined' && liveItemLength != null) {
+				if(liveItemLength>1){liveItemLength=2}
+				for(var i=0;i<liveItemLength;i++){
+					if(i=="1"){
+						liveItemCon+="<li class='video-bd-o'><a href='"+liveItem[i].channel.url+"?ADTAG=media.dnfgw' target='_blank' title='"+unescape(liveItem[i].channel.status)+"'><img src='"+liveItem[i].preview+"' alt='' /><s class='sprite-icon icon-video'></s></a><p>"+unescape(liveItem[i].channel.status)+"</p></li>";
+					}else{
+						liveItemCon+="<li><a href='"+liveItem[i].channel.url+"?ADTAG=media.dnfgw' target='_blank' title='"+unescape(liveItem[i].channel.status)+"'><img src='"+liveItem[i].preview+"' alt='' /><s class='sprite-icon icon-video'></s></a><p>"+unescape(liveItem[i].channel.status)+"</p></li>";
+					}
+				}
+				dnf.$$('star_list').innerHTML=liveItemCon;
+			}else{dnf.$$('star_list').innerHTML="<li>很抱歉，服务器暂时繁忙，请您稍后再试！</li>";}
+		})
+	};
+	dnf.getPropertyCount=function(o){var jsonList=eval(week_act_data), n, count = 0;for(n in jsonList[o]){if(jsonList[o].hasOwnProperty(n)){count++;}}return count;};
+	dnf.returnWeekAct=function(n){
+		var jsonList=eval(week_act_data),newslist="<ul>";
+		if(dnf.getPropertyCount(n)=="0"){
+			newslist="没有内容"
+		}else{
+			for(var x in jsonList[n]){newslist+="<li><s class='sprite-icon week-act-icon'></s><span>"+jsonList[n][x]['time']+"</span><a href="+jsonList[n][x]['surl']+" target='_blank'>"+jsonList[n][x]['title']+"</a></li>";}
+		};
+		newslist+="</ul>"
+		return newslist
+	};
+	dnf.selectWeek=function(){
+		var nowDate=new Date(),nowDateDay=nowDate.getDay();
+		switch(nowDateDay){
+			case 1:
+			dnf.initWeekAct(1);
+			break
+			case 2:
+			dnf.initWeekAct(2);
+			break
+			case 3:
+			dnf.initWeekAct(3);
+			break
+			case 4:
+			dnf.initWeekAct(4);
+			break
+			case 5:
+			dnf.initWeekAct(5);
+			break
+			case 6:
+			dnf.initWeekAct(6);
+			break
+			case 0:
+			dnf.initWeekAct(7);
+			break
+		}
+	};
+	dnf.initWeekAct=function(n){
+		var index=n-1,link=dnf.$$("week-act-list").getElementsByTagName("ul")[0].getElementsByTagName("li"),act_con=dnf.$$("act-con");
+		link[n-1].className="cur";
+		act_con.innerHTML=dnf.returnWeekAct(n);
+		for(var i=0;i<link.length;i++){
+			link[i].onclick=(function(num){
+				return function(){
+					link[index].className="";
+					index=num;
+					link[num].className="cur";
+					act_con.innerHTML=dnf.returnWeekAct(num+1);
+				}
+			})(i);
+		}
+	};
+	dnf.initChapter=function(n){
+		var html="",chapter_Data=eval(chapterData);
+		for(var i=0;i<chapter_Data[n].length;i++){
+			if(n=='future'){
+				html+='<li><h4>'+chapterData[n][i].title+'<s class="sprite-icon icon-chapter-down"></s></h4><div class="sprite-icon icon-chapter"></div><div class="chapter-name">'+chapterData[n][i].subTitle+'</div><div class="chapter-time">'+chapterData[n][i].time+'</div></li>';
+			}else if(n=='online'){
+				html+='<li class="online"><a href="'+chapterData[n][i].surl+'" target="_blank"><h4>'+chapterData[n][i].title+'<s class="sprite-icon icon-chapter-down"></s></h4><div class="sprite-icon icon-chapter"></div><div class="chapter-name">'+chapterData[n][i].subTitle+'</div><div class="chapter-time">'+chapterData[n][i].time+'</div></a></li>';
+			}else if(n=='over'){
+				html+='<li class="over"><a href="'+chapterData[n][i].surl+'" target="_blank"><h4>'+chapterData[n][i].title+'<s class="sprite-icon icon-chapter-down"></s></h4><div class="sprite-icon icon-chapter"></div><div class="chapter-name">'+chapterData[n][i].subTitle+'</div><div class="chapter-time">'+chapterData[n][i].time+'</div></a></li>';
+			}
+		}
+		dnf.$$("chapter-list").innerHTML+=html
+	};
+	dnf.raidersCallback=function(n,index,panel){
+		if(n==1){
+			dnf.$$("raiders-news-mt").innerHTML=dnf.initJobNews.initNewsMedia();
+		}
+	}
+	dnf.JobNewsCallback=function(n, index, panel){
+		var nowTime=new Date().getTime();
+		var jobNewsNum=dnf.$$("job-tab").getElementsByTagName("em");
+		jobNewsNum[n].className+=" looked";
+		dnf.userInfo("user_gl_time");
+		/*var jobNewsCon=dnf.getElementsByClassName("job-tab","raiders-news","ul");
+		if(n==4){jobNewsCon[n].innerHTML=dnf.initJobNews.initJob('8');}
+		else if(n==5){jobNewsCon[n].innerHTML=dnf.initJobNews.initJob('4');}
+		else if(n==6){jobNewsCon[n].innerHTML=dnf.initJobNews.initJob('5');}
+		else if(n==7){jobNewsCon[n].innerHTML=dnf.initJobNews.initJob('6');}
+		else if(n==8){jobNewsCon[n].innerHTML=dnf.initJobNews.initJob('7');}
+		else{jobNewsCon[n].innerHTML=dnf.initJobNews.initJob(n);}*/
+	};
+	dnf.initJobNews={
+		initJob:function(n){
+			var html="",jobData=eval(raiders_guanwang_static_data2);
+			for(var i=0;i<jobData[2][n].length;i++){
+				var date=jobData[2][n][i].createtime;
+				date=date.replace(/\-/g, "/");
+				var sDate=new Date(date);
+				html +='<li><span>'+sDate.getFullYear()+"/"+(sDate.getMonth()+1)+"/"+sDate.getDate()+'</span><a href="'+jobData[2][n][i].surl+'" target="_blank">'+jobData[2][n][i].title+'</a></li>';
+			}
+			return html
+		},
+		initNewsMedia:function(){
+			/*var html="",jobData=eval(raiders_guanwang_static_data2);
+			for(var x in jobData[1]){
+				var date=jobData[1][x]['createtime'];
+				date=date.replace(/\-/g, "/");
+				var sDate=new Date(date);
+				html+="<li><span>"+sDate.getFullYear()+"/"+(sDate.getMonth()+1)+"/"+sDate.getDate()+"</span><a href="+jobData[1][x]['surl']+" target='_blank'>"+jobData[1][x]['title']+"</a></li>";
+			}
+			return html*/
+			var html="";
+			for(var i=0;i<6;i++){
+				html+="<li><span>"+newsIndexData[i].dtReleaseTime+"</span><a href="+newsIndexData[i].infoPath+" target='_blank'>"+decodeURI(newsIndexData[i].sTitle)+"</a></li>";
+			}
+			return html;
+		}
+	};
+	dnf.firstNews=function(id,n){
+		dnf.$$(id).getElementsByTagName("ul")[n+1].getElementsByTagName("li")[0].className="news-hot";
+	};
+	//dnf.eventCallBack=function(n, index, panel){
+	//	dnf.firstNews("event-tab",n)
+	//};
+	dnf.initEventLive=function(){
+		var html="";
+		for(var i=0;i<3;i++){
+				html+='<li><span class="t1">'+decodeURI(newsIndexData[i].sField1Value)+'</span><span class="t2">'+decodeURI(newsIndexData[i].sField2Value)+'</span><span class="t3">'+decodeURI(newsIndexData[i].sField3Value)+'</span><span class="t4">'+decodeURI(newsIndexData[i].sField4Value)+'</span><span class="t5">'+decodeURI(newsIndexData[i].sField5Value)+'</span><span class="t6"><a href="'+decodeURI(newsIndexData[i].sField6Value)+'" target="_blank">观看</a></span></li>';
+		};
+		dnf.$$('event-live-list').innerHTML=html;
+	};
+	dnf.LinkInfo=function(str,iVideoId){
+    	if(str == ''){
+    		return 'http://dnf.qq.com/v/detail.shtml?tid='+iVideoId;
+    	}else{
+    		return 'http://dnf.qq.com/v/go.shtml?tid='+iVideoId;
+    	}
+    };
+	dnf.hotVideo=function(TypeId){
+    	for(var x in typeHotObj.msg){
+    		if(x == TypeId){
+    			var RetHTML = '';
+    			var data = typeHotObj['msg'][x];
+    			if(typeHotObj['msg'][x]){
+    				for(var y=0;y<2;y++){
+	    				if(y==1){
+	    					RetHTML+='<li class="video-bd-o"><a href="'+dnf.LinkInfo(data[y]['sUrl'],data[y]['iVideoId'])+'" onclick="pgvSendClick({hottag:\'dnfweb.typehot.iType'+x+'.a'+data[y]['iVideoId']+'\'});" target="_blank"><img src="'+data[y]['sIMG']+'" alt="" /><s class="sprite-icon icon-video"></s></a><p>'+data[y]['sTitle']+'</p></li>';
+	    				}else{
+	    					RetHTML+='<li><a href="'+dnf.LinkInfo(data[y]['sUrl'],data[y]['iVideoId'])+'" onclick="pgvSendClick({hottag:\'dnfweb.typehot.iType'+x+'.a'+data[y]['iVideoId']+'\'});" target="_blank"><img src="'+data[y]['sIMG']+'" alt="" /><s class="sprite-icon icon-video"></s></a><p>'+data[y]['sTitle']+'</p></li>';
+	    				}
+	    			}
+    			}
+    			dnf.$$('TypeHot').innerHTML=RetHTML;
+    		}
+    	}
+	};
+	dnf.showWeiXin=function(n){
+		/*
+		if(n=='1'){
+			dnf.$$('weixin-tip').style.display="block"
+		}else{dnf.$$('weixin-tip2').style.display="block"}
+		*/
+		if(!n) return
+		var n = parseInt(n);
+		switch(n){
+			case 1:
+				dnf.$$('weixin-tip').style.display="block";
+				break;
+			case 2:
+				dnf.$$('weixin-tip2').style.display="block";
+				break;
+			case 3:
+				dnf.$$('weixin-tip3').style.display="block";
+				break;
+			case 4:
+				dnf.$$('weixin-tip4').style.display="block";
+				break;
+		}
+
+	};
+	dnf.hideWeiXin=function(a){
+		a.parentNode.style.display='none';
+	};
+	dnf.guide={
+		init:function(){
+			var guideHtml='<div class="guide-mask"></div><div class="guide-inner" id="guide-inner"><div class="guide guide-1"><a href="javascript:dnf.guide.next(1);" class="guide-on"></a><a href="javascript:dnf.guide.end();" class="guide-end"></a></div><div class="guide guide-2"><a href="javascript:dnf.guide.next(2);;" class="guide-on"></a><a href="javascript:dnf.guide.end();" class="guide-end"></a></div><div class="guide guide-3"><a href="javascript:dnf.guide.next(3);;" class="guide-on"></a><a href="javascript:dnf.guide.end();" class="guide-end"></a></div><div class="guide guide-4"><a href="javascript:dnf.guide.end();" class="guide-end"></a></div></div>';
+			dnf.$$('guide-box').innerHTML=guideHtml;
+			this.next(0);
+		},
+		next:function(n){
+			var guide_pannel=dnf.$$('guide-inner').getElementsByTagName('div'),scrollLong=['wrap','adggs1','cartoonGg','chapter']
+			for(var i=0;i<guide_pannel.length;i++){
+				guide_pannel[i].style.display="none";
+			}
+			dnf.$$('guide-box').style.display="block";
+			dnf.scroller.init(scrollLong[n],800);
+			guide_pannel[n].style.display="block"
+		},
+		end:function(){
+			dnf.$$('guide-box').style.display="none";
+			dnf.scroller.init("wrap",800);
+		}
+	};
+	dnf.loadModule={
+
+
+	};
+//订制统计
+dnf._hottag={11:"shop",12:"strategy",13:"media",14:"version",15:"brand",16:"race",17:"gamer",18:"newer"},dnf._original="14;13;17;12;15;16;11";//[11]商城,[12]职业攻略,[13]媒体资讯,[14]版本更新,[15]品牌专区,[16]赛事专区,[17]玩家社区,[18]新手引导
+dnf._pgvSendPageEditor=function(_data,_type){//console.log(_data)
+	var _status=_data.msg.split(",");
+	if(_status[0]==1){
+		//if(typeof(_data)!='undefined'){//console.log(typeof(_data)!='undefined')
+			if(_data.ret==0&&_status[1]==1&&_data.data!=dnf._original){
+				var valueList=_data.data.split(";");
+				for(i=0;i<valueList.length;i++){
+					//console.log('dnfweb.PageValue.Top'+(i+1)+'.'+valueList[i])
+					pgvSendClick({hottag:'PageValue.'+_type+'.Top'+(i+1)+'.'+dnf._hottag[valueList[i]]});
+				}
+			}
+			else{
+				pgvSendClick({hottag:'PageValue.original'});
+			}
+		/*}
+		else{
+			pgvSendClick({hottag:'PageValue.undefined'});
+		}*/
+	}
+	else{
+		pgvSendClick({hottag:'PageValue.unlogin'});
+	}
+};
+	dnf.load=function(){
+		dnf.loadScript("http://ossweb-img.qq.com/images/js/title.js",function(){ostb_int();});
+
+		dnf.loadScript('http://tajs.qq.com/stats?sId=13550203',function() {
+			dnf.loadScript('http://pingjs.qq.com/ping_tcss_ied.js',function(){dnf.count()})
+		});
+		dnf.loadScript('http://dnf.qq.com/navNewInfoNum/js/dnfNavNewInfoNum.js',function(){
+			var contentNum=RES_NavNewInfoNum.contentNum,videoNum=RES_NavNewInfoNum.videoNum,actNum=RES_NavNewInfoNum.actNum;
+			if(contentNum==0){
+				dnf.$$("icon-community").style.display="none";
+			}if(videoNum==0){
+				dnf.$$("icon-video").style.display="none";
+			}if(actNum==0){
+				dnf.$$("icon-act").style.display="none";
+			}
+			dnf.$$("icon-community").innerHTML=contentNum;
+			dnf.$$("icon-video").innerHTML=videoNum;
+			dnf.$$("icon-act").innerHTML=actNum;
+		})
+dnf.loadScript("/web2015/js/data.js",function(){dnf.selectWeek();});
+		dnf.loadScript("http://game.qq.com/time/qqadv/Info_new_14740.js",function(){dnf.$$("wrap").style.backgroundImage='url(http://ossweb-img.qq.com/upload/adw/'+oDaTaNew14740.pos13189[2]+')';dnf.$$("detail").href=oDaTaNew14740.pos13189[1];});
+
+		dnf.initFlash("down","http://dnf.qq.com/web2015/swf/down.swf","215","159");
+		dnf.loadScript("http://game.qq.com/time/qqadv/Info_new_11370.js?v=1396405468022", function() {
+			dnf.gg(["idataAdPos1", "idataAdPos2", "idataAdPos3", "idataAdPos4", "idataAdPos5", "idataAdPos6", "idataAdPos7", "promo"], 270, "ad");
+			dnf.single(["17112", "ewm1"], "single.adewm1");
+			dnf.single(["17113", "ewm2"], "single.adewm2");
+			dnf.loadScript("http://ossweb-img.qq.com/images/clientpop/js/tgadshow.min.js");
+		})
+
+		var newsTab=new dnf.tabs("news-tab", "tab-panel",{onFinish:dnf.replaceCookie});
+		//newsTab.switchTo(2);
+
+		new dnf.slide("menu-guide","menu-guide-tit-li","li","guide-panel",{hide:true});
+		//var jobTab=new dnf.slide("job-tab","job-list","div","job-info",{showF:true,event:"click",onFinish:dnf.JobNewsCallback});
+		//dnf.loadScript("web2015/js/week_act.js",function(){});
+		//
+		//new dnf.tabs("raiders-tab", "tab-panel",{onFinish:dnf.raidersCallback});
+
+		//视频推荐
+		dnf.loadScript("http://ams.qq.com/wmp/data/js/WMP_TYPEHOTLIST_GW_7.js",function(){
+			var index=0,videoTitle=dnf.$$('video-tab').getElementsByTagName('li');
+			for(var i=0;i<videoTitle.length;i++){
+				videoTitle[i].onclick=(function(num){
+					return function(){
+						videoTitle[index].className="";
+						index=num;
+						videoTitle[num].className="cur";
+						switch(num){
+							case 0:
+							dnf.hotVideo(0);
+							break
+							case 1:
+							dnf.hotVideo(161);
+							break
+							case 2:
+							dnf.hotVideo(162);
+							break
+							//case 3:
+							//dnf.hotVideo(165);
+							break
+							case 3:
+							dnf.hotVideo(163);
+							break
+							case 4:
+							dnf.hotVideo(160);
+							break
+						}
+						return false;
+					}
+				})(i)
+			}
+			dnf.hotVideo(0);dnf.tgaVideo();
+		});
+		//dnf.loadScript('http://ac.o2.qq.com/php/show.php?loc_id=117_026952d2b2459e4879bbddb9ff77f238&data_type=jsonp');
+		//dnf.scrollElent();
+		dnf.firstNews("news-tab",0);
+		//dnf.firstNews("event-tab",0);
+
+		//dnf.loadScript("http://dnf.qq.com/raiders/data/raiders_guanwang_static_data2.js",function(){dnf.getElementsByClassName("job-tab","raiders-news","ul")[0].innerHTML=dnf.initJobNews.initJob('0')});
+		dnf.corp();
+		dnf.report(2);
+		//道聚城推荐
+		dnf.loadScript("http://ossweb-img.qq.com/images/js/milo/milo.js",function(){
+			dnf.loadScript("http://ossweb-img.qq.com/images/js/recact.js?biz=dnf&customize=1&customFunc=dnf.fillTmpl&scene_id=1",function(){
+				dnf.loadScript("http://gameact.qq.com/comm-htdocs/js/game_area/dnf_server_select.js",function(){
+					dnf.loadScript("http://ossweb-img.qq.com/images/comm/sign.js",function(){
+						dnf.loadScript("/web2015/js/comm.js");
+					})
+				})
+			});
+		});
+		dnf.showTopUpdataNum();
+		dnf.countPush("http://dnf.qq.com/webplat/info/news_version3/119/495/498/m388/index.js","icon-push-gg");//公告
+		dnf.countPush("http://dnf.qq.com/webplat/info/news_version3/119/495/497/m388/index.js","icon-push-act");//活动
+		dnf.countPush("http://dnf.qq.com/webplat/info/news_version3/119/499/m389/index.js","icon-push-event");//赛事
+		dnf.countPush("http://dnf.qq.com/webplat/info/news_version3/119/506/509/m390/index.js","icon-push-bbs");//论坛
+		dnf.loadScript("http://dnf.qq.com/web2015/js/chapter_nav.js",function(){});
+		dnf.setAct();//活动中心
+
+
+		//读取用户定制的个性化配置。
+		dnf.loadScript("/web2015/js/dnf_page_edit.js",function(){
+		    getUserCfg();
+		});
+
+	};
+	window.dnf=dnf;
+	dnf.report(1);
+	dnf.addEventSimple(window, "load", dnf.load);
+	window.gotoPage=function(){
+		pgvSendClick({hottag: 'main.sidebar.flash.down'});
+		window.open("http://dnf.qq.com/web2015/down.shtml")
+	};
+})(window);
+/*function gpmAdProcess() {
+	var eles = document.getElementById("act_list").getElementsByClassName("time-show");
+	var len = eles.length;
+	var endTime = '';
+	var act_time = '';
+	var addHtml = '';
+	while(len--){
+		oCurrEl = eles[len];
+		aEls = oCurrEl.getElementsByTagName("a");
+		//console.log(aEls[0]);
+		endTime = aEls[0].firstChild.getAttribute('data-endtime');
+		act_time = dnf.DateDiff(endTime);
+		addHtml = '<p class="gg-time">' + act_time + '</p>';
+		aEls[0].innerHTML += addHtml;
+	}
+}*/
+/*  |xGv00|2cd7570135e9df9761cdca4692fe42d6 */

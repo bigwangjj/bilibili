@@ -1,0 +1,801 @@
+
+
+
+/*主体。。。。。。。。。。。。。。。。开始*/
+
+
+.main-nav{
+		width:100%;
+}
+.nav{
+		width:1160px;
+		margin:0 auto;
+		/*background-color:rgba(255,0,0,.3);*/
+		height:62px;
+}
+.nav>ul{
+		float:left;
+}
+.nav>ul>li{
+		height:62px;
+		float: left;
+		padding:0 15px;
+}
+.nav>ul>li>a{
+		width:48px;
+		height:52px;
+	 text-align: center;
+		float:left;
+
+}
+.nav>ul>li>a>i{
+		display: block;
+		width:28px;
+		margin:6px 10px 0;
+		height:18px;
+		line-height: 18px;
+		color:#fff;
+		font-size: 12px;
+		text-align:center;
+		border-radius:3px;
+		background-color:#FFAFC9;
+}
+.nav>ul>li.index>a>i{
+		display: block;
+		width:24px;
+		margin:0 12px;
+		height:24px;
+		background: url(../material/bilibili/header/icons.png) -659px -1170px;
+}
+.nav>ul>li>a>s{
+		width:48px;
+		height:20px;
+}
+
+div.container{
+	width:1160px;
+	margin:0 auto 20px;
+	min-height:200px;
+	/*background-color: #03d0e3;*/
+}
+div.container>div.top-container{
+	margin-bottom:20px;
+}
+div.container>div.top-container>div.con-left{
+	width:440px;
+	float:left;
+	position: relative;
+}
+div.container>div.top-container>div.con-left>div.pic{
+	position: relative;
+}
+div.container>div.top-container>div.con-left>div.pic>a{
+	position: absolute;
+	opacity: 0;
+	transition: all 1s linear;
+}
+div.container>div.top-container>div.con-left>div.pic>a>img{
+	border-radius: 5px;
+}
+div.container>div.top-container>div.con-left>div.pic>a.active{
+	z-index:1;
+	opacity: 1;
+	transition: all 1s linear;
+}
+div.container>div.top-container>div.con-left>ul.dom{
+	position: absolute;
+	z-index:2;
+	left:314px;
+	top:186px;
+}
+div.container>div.top-container>div.con-left>ul.dom>li{
+	float: left;
+	cursor: pointer;
+	width: 18px;
+	height: 18px;
+	margin: 2px 2px;
+	background: url(../material/bilibili/header/icons.png) -855px -790px no-repeat;
+}
+div.container>div.top-container>div.con-left>ul.dom>li.active{
+	background: url(../material/bilibili/header/icons.png) -855px -727px no-repeat;
+}
+div.container>div.top-container>div.con-left>ol.text{
+	position: absolute;
+	z-index: 2;
+	height:25px;
+	left:18px;
+	top:184px;
+}
+div.container>div.top-container>div.con-left>ol.text>li{
+	float: left;
+	height:25px;
+	line-height: 25px;
+	color:#fff;
+	display: none;
+}
+div.container>div.top-container>div.con-left>ol.text>li.active{
+	display: inline-block;
+}
+div.container>div.top-container>div.con-right{
+	width:700px;
+	float:right;
+	height:auto;
+	position: relative;
+}
+div.container>div.top-container>div.con-right>ul{
+	width:720px;
+	height:auto;
+	display:none;
+}
+div.container>div.top-container>div.con-right>ul.active{
+	width:720px;
+	height:auto;
+	display:block;
+}
+div.container>div.top-container>div.con-right>ul>li{
+	width:180px;
+	float:left;
+	height: 100px;
+	margin-bottom: 20px;
+}
+div.container>div.top-container>div.con-right>ul>li>a{
+	width: 160px;
+	height: 100px;
+	position: relative;
+}
+div.container>div.top-container>div.con-right>ul>li>a>img{
+	width:100%;
+	height:100%;
+	border-radius: 5px;
+}
+div.container>div.top-container>div.con-right>ul>li>a>div.mask{
+	width: 160px;
+	height: 100px;
+	position: absolute;
+	z-index: 1;
+	top:0;
+	left:0;
+	border-radius: 5px;
+	background-color: rgba(0,0,0,0);
+}
+div.container>div.top-container>div.con-right>ul>li>a>div.mask.active{
+	background-color: rgba(0,0,0,.5);
+}
+div.container>div.top-container>div.con-right>ul>li>a>div.mask>*{
+	font-size: 12px;
+	color:#fff;
+	display: block;
+	position: absolute;
+	left:10px;
+}
+div.container>div.top-container>div.con-right>ul>li>a>div.mask>p{
+	top:10px;
+	display: none;
+}
+div.container>div.top-container>div.con-right>ul>li>a>div.mask>i{
+	top:54px;
+	display: none;
+}
+div.container>div.top-container>div.con-right>ul>li>a>div.mask>s{
+	top:65px;
+	display: none;
+}
+div.container>div.top-container>div.con-right>ul>li>a>div.mask>span{
+	top:77px;
+}
+div.container>div.top-container>div.con-right>div{
+	position: absolute;
+	background-color:rgba(255,0,255,0.4);
+	background-image: url(../material/bilibili/header/icons.png);
+	background-repeat: no-repeat;
+	width:25px;
+	height:25px;
+	border-radius: 50%;
+	top: 53.1%;
+	margin-top: -30px;
+	cursor: pointer;
+	font-size: 12px;
+	color: #fff;
+	z-index: 99;
+	text-align: center;
+}
+div.container>div.top-container>div.con-right>div.lb{
+	background-position:-467px -1684px;
+	left:0;
+
+}
+div.container>div.top-container>div.con-right>div.lb:hover{
+	background-position:-535px -1684px;
+	background-color: rgba(0,0,0,0.3);
+}
+
+div.container>div.top-container>div.con-right>div.rb{
+	background-position:-465px -1620px;
+	left:96.5%;
+}
+div.container>div.top-container>div.con-right>div.rb:hover{
+	background-position:-532px -1620px;
+	background-color: rgba(0,0,0,0.3);
+}
+
+
+
+div.container>div.main-container{
+	width:1160px;
+	position:relative;
+}
+div.container>div.main-container>.left{
+	width:880px;
+	float:left;
+	/*min-height: 300px;*/
+}
+div.container>div.main-container>.left>.head{
+	width:880px;
+	height:40px;
+	position: relative;
+	margin-bottom:20px;
+}
+div.container>div.main-container>.left>.head>span{
+	display: inline-block;
+	position: absolute;
+	top:0;
+	left:0;
+	width:40px;
+	height:40px;
+	background: url(../material/bilibili/header/icons.png) no-repeat -141px -908px;
+}
+div.container>div.main-container>.left>.head>a{
+	display: inline-block;
+	font-size: 24px!important;
+	line-height: 24px;
+	font-weight: normal;
+	padding: 9px 0 0 50px;
+}
+div.container>div.main-container>.left>.head>.ul{
+	display: inline-block;
+	height:24px;
+	position: relative;
+	padding-left:10px;
+}
+div.container>div.main-container>.left>.head>.ul>a{
+	font-size: 12px;
+	color:#222;
+	margin-right:10px;
+	padding-bottom:4px;
+	position: relative;
+}
+div.container>div.main-container>.left>.head>.ul>a.active{
+	color:#00a1d6;
+	border-bottom:1px solid #00a1d6;
+}
+div.container>div.main-container>.left>.head>.ul>a:hover{
+	color:#00a1d6;
+}
+div.container>div.main-container>.left>.head>.ul>a>span{
+	position: absolute;
+	top:78%;
+	left:48%;
+	width:0;
+	height:0;
+	border:3px solid transparent;
+	border-bottom:3px solid #00a1d6;
+	display: none;
+}
+div.container>div.main-container>.left>.head>.ul>a.active>span{
+	display:block;
+}
+div.container>div.main-container>.left>.head>.img-text{
+	padding-left:50px;
+	display: inline-block;
+	height:24px;
+	position: relative;
+}
+div.container>div.main-container>.left>.head>.img-text>i{
+	position: absolute;
+	top:3px;
+	left:32px;
+	width: 14px;
+	height: 15px;
+	background:url(../material/bilibili/header/icons.png) no-repeat -665px -1113px;
+}
+div.container>div.main-container>.left>.head>.more{
+	float: right;
+	text-align: center;
+	margin:10px 0 0 10px;
+	padding:2px 10px 0;
+	height:22px;
+	border:1px solid #FFAFC9;
+	border-radius: 3px;
+}
+div.container>div.main-container>.left>.head>.more:hover{
+	background-color: #FFAFC9;
+	cursor: pointer;
+}
+div.container>div.main-container>.left>.head>.more>a{
+	font-size: 12px;
+	line-height: 1;
+	padding-right:7px;
+	position: relative;
+}
+div.container>div.main-container>.left>.head>.more>a>span{
+	position: absolute;
+	margin: 0 0 0 2px;
+	top:0;
+	width: 6px;
+	height: 12px;
+	background:url(../material/bilibili/header/icons.png) no-repeat -478px -218px;
+}
+div.container>div.main-container>.left>.head>.refresh{
+	float: right;
+	text-align: center;
+	margin:10px 0 0 0;
+	padding:2px 10px 0;
+	height:22px;
+	border:1px solid #FFAFC9;
+	border-radius: 3px;
+}
+div.container>div.main-container>.left>.head>.refresh.active{
+	background-color: #FFAFC9;
+	cursor: pointer;
+}
+div.container>div.main-container>.left>.head>.refresh>*{
+	font-size: 12px;
+}
+div.container>div.main-container>.left>.head>.refresh>span{
+	display: inline-block;
+	width: 12px;
+	height: 13px;
+	vertical-align: top;
+	transition: .2s;
+	margin-top: 5px;
+	background:url(../material/bilibili/header/icons.png) no-repeat -475px -89px;
+}
+div.container>div.main-container>.left>.head>.refresh>span.active{
+	-webkit-transform:rotate3D(0,0,1,360deg);
+}
+div.container>div.main-container>.left>.body{
+
+	width:900px;
+	height:auto;
+	position: relative;
+}
+div.container>div.main-container>.left>.body>ul{
+	width:900px;
+	height:auto;
+	/*display:none;*/
+}
+div.container>div.main-container>.left>.body>ul.five>li{
+	width:160px;
+	float:left;
+	height: 150px;
+	margin:0 20px 20px 0;
+}
+div.container>div.main-container>.left>.body>ul.five>li>a.pic{
+	width: 160px;
+	height: 100px;
+	position: relative;
+}
+div.container>div.main-container>.left>.body>ul.five>li>a.pic>.medal{
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 40px;
+	height: 24px;
+	border-radius: 5px;
+    background: url(../material/bilibili/header/icons.png) no-repeat -849px -212px;
+}
+div.container>div.main-container>.left>.body>ul.five>li>a.pic>span{
+	position: absolute;
+	left: 70%;
+	top:75%;
+	color:#fff;
+	z-index: 10;
+	display: none;
+}
+div.container>div.main-container>.left>.body>ul.five>li>a.pic>.mask{
+	position: absolute;
+	left: 0;
+	top:0;
+	width: 160px;
+	height: 100px;
+	z-index: 9;
+	background: rgba(0,0,0,.4);
+	border-radius: 5px;
+	display: none;
+}
+div.container>div.main-container>.left>.body>ul.five>li>a.pic>.mask>p{
+	position: absolute;
+	left:0;
+	overflow: hidden;
+}
+
+div.container>div.main-container>.left>.body>ul.five>li>a.text{
+	width: 160px;
+	height: 48px;
+	position: relative;
+	overflow: hidden;
+}
+div.container>div.main-container>.left>.body>ul.five>li>a>img{
+	width:100%;
+	height:100%;
+	border-radius: 5px;
+}
+div.container>div.main-container>.left>.body>ul.five>li>a.text>p{
+	display: inline;
+	margin-bottom: 8px;
+	padding-top: 8px;
+	height: 20px;
+	line-height: 20px;
+	transition: all .2s linear;
+	color: #222;
+	overflow: hidden;
+	text-align: left;
+	font-size: 12px;
+}
+div.container>div.main-container>.left>.body>ul.five>li>a.text>p.active{
+	color:#00a1d6;
+}
+div.container>div.main-container>.left>.body>ul.five>li>a.text>.play{
+	width:160px;
+	height:24px;
+	position: absolute;
+	line-height: 24px;
+	margin: 0;
+	top:49px;
+	left:0;
+	background: rgba(255,255,255,1);
+	transition: all .3s linear;
+}
+div.container>div.main-container>.left>.body>ul.five>li>a.text>.play.active{
+	top:24px;
+}
+div.container>div.main-container>.left>.body>ul.five>li>a.text>.play>span{
+	font-size: 12px;
+	color:darkgrey;
+
+}
+div.container>div.main-container>.left>.body>ul.five>li>a.text>.play>span.rb{
+	margin-left:20px;
+}
+div.container>div.main-container>.left>.body>ul.five>li>a.text>.play>span>i{
+	width:12px;
+	height:12px;
+	margin-right:5px;
+}
+div.container>div.main-container>.left>.body>ul.five>li>a.text>.play>span.lb>i{
+	background:url(../material/bilibili/header/icons.png) no-repeat -282px -90px;
+}
+div.container>div.main-container>.left>.body>ul.five>li>a.text>.play>span.rb>i{
+	background:url(../material/bilibili/header/icons.png) no-repeat -282px -218px;
+}
+
+
+
+div.container>div.main-container>.right{
+	min-height: 360px;
+	float: right;
+	width: 260px;
+	margin-bottom: 50px;
+}
+div.container>div.main-container>.right>.head{
+	width:260px;
+	height:24px;
+	padding-top:16px;
+}
+div.container>div.main-container>.right>.head>h3{
+	float: left;
+	margin:0;
+}
+div.container>div.main-container>.right>.head>a{
+	float: left;
+	margin-left:10px;
+	font-size: 12px;
+	padding-bottom:5px;
+	position: relative;
+}
+div.container>div.main-container>.right>.head>a>span{
+	position: absolute;
+	top:78%;
+	left:40%;
+	width:0;
+	height:0;
+	border:3px solid transparent;
+	border-bottom:3px solid #00a1d6;
+	display: none;
+}
+div.container>div.main-container>.right>.head>a.active{
+	border-bottom:1px solid;
+	color:#00a1d6;
+}
+div.container>div.main-container>.right>.head>a.active>span{
+	display: block;
+}
+div.container>div.main-container>.right>.head>select{
+	border:1px solid #FFAFC9;
+	float: right;
+	font-size: 12px;
+	border-radius: 5px;
+	padding:3px 10px;
+	outline: none;
+}
+div.container>div.main-container>.right>.body{
+	width:260px;
+	padding-top:20px;
+}
+div.container>div.main-container>.right>.body>ul{
+	width:260px;
+
+}
+div.container>div.main-container>.right>.body>ul>li{
+	width:260px;
+	height:18px;
+	position: relative;
+	margin-top:20px;
+}
+div.container>div.main-container>.right>.body>ul>li.first{
+	margin-top:0;
+	height:50px;
+}
+div.container>div.main-container>.right>.body>ul>li>i{
+	position: absolute;
+	background: #f25d8e;
+	color: #fff;
+	height: 18px;
+	line-height: 17px;
+	top: 3px;
+	left: 0;
+	font-size: 12px;
+	min-width: 12px;
+	text-align: center;
+	z-index: 20;
+	border-radius: 4px;
+	padding: 0 3px 0 3px;
+	font-weight: bolder;
+}
+div.container>div.main-container>.right>.body>ul>li.first>img{
+	width:80px;
+	height:50px;
+	border-radius: 3px;
+	margin-left:25px;
+}
+div.container>div.main-container>.right>.body>ul>li>a{
+	margin-left:25px;
+	height:18px;
+	line-height: 18px;
+	font-size: 13px;
+}
+
+div.container>div.main-container>.right>.body>ul>li.first>a{
+	margin-left:0;
+	width:148px;
+	height:50px;
+
+}
+div.container>div.main-container>.right>.body>ul>li.first>a>div{
+	display: inline-block;
+	width:150px;
+	height:36px;
+	margin-bottom:2px;
+	font-size: 13px;
+}
+div.container>div.main-container>.right>.body>ul>li.first>a>span{
+	color:#FFAFC9;
+	font-size: 12px;
+}
+div.container>div.main-container>.right>.body>a.more{
+	display: block;
+	width:260px;
+	height:18px;
+	font-size: 13px;
+	line-height: 18px;
+	position: relative;
+	margin-top:18px;
+	text-align:center;
+	padding:4px 0;
+	border-radius: 5px;
+	background-color: #e0e6ed;
+}
+div.container>div.main-container>.right>.body>a.more:hover{
+	background-color: #FFAFC9;
+}
+
+
+
+div.container>div.main-container>.left>.head>span.fj{
+	background: url(../material/bilibili/header/icons.png) no-repeat -141px -140px;
+}
+div.container>div.main-container>.left>.head>.date{
+	position: absolute;
+	height:40px;
+	top:0;
+	left:125px;
+	border-bottom: 1px solid gainsboro;
+}
+
+div.container>div.main-container>.left>.head>.date>a{
+	float: left;
+	width:72px;
+	font-size: 18px;
+	font-weight: 300;
+	height: 40px;
+	line-height:40px ;
+	text-align: center;
+	color: #000;
+	position: relative;
+}
+div.container>div.main-container>.left>.head>.date>a.active{
+	border-bottom: 1px solid #00a1d6;
+	color:#00a1d6;
+}
+div.container>div.main-container>.left>.head>.date>a>span{
+	position: absolute;
+	top: 78%;
+	left: 43%;
+	width: 0;
+	height: 0;
+	border: 5px solid transparent;
+	border-bottom:5px solid #00a1d6;
+	display: none;
+}
+div.container>div.main-container>.left>.head>.date>a.active>span{
+	display: block;
+}
+
+
+
+
+div.container>div.main-container>.left>.head>.new{
+	float: right;
+	padding:5px 16px 5px 10px;
+	height:30px;
+	border:1px solid #f25d8e;
+	border-radius: 3px;
+}
+div.container>div.main-container>.left>.head>.new:hover{
+	background-color: #FFAFC9;
+	cursor: pointer;
+}
+div.container>div.main-container>.left>.head>.new>a{
+	font-size:16px;
+	line-height:31px;
+	text-align: center;
+	/*padding-right:7px;*/
+	position: relative;
+	color:#f25d8e;
+}
+div.container>div.main-container>.left>.head>.new>a>span{
+	position: absolute;
+	margin: 10px 0 0 2px;
+	top:0;
+	width: 6px;
+	height: 12px;
+	background:url(../material/bilibili/header/icons.png) no-repeat -478px -218px;
+}
+
+
+div.container>div.main-container>.left>.body>ul.four>li{
+	width:220px;
+	float:left;
+	height:72px;
+	padding-top:36px;
+}
+/*div.container>div.main-container>.left>.body>ul.four>li.first{*/
+	/*padding-top:0;*/
+/*}*/
+div.container>div.main-container>.left>.body>ul.four>li:nth-child(1){
+	padding-top:0;
+}
+div.container>div.main-container>.left>.body>ul.four>li:nth-child(2){
+	padding-top:0;
+}
+div.container>div.main-container>.left>.body>ul.four>li:nth-child(3){
+	padding-top:0;
+}
+div.container>div.main-container>.left>.body>ul.four>li:nth-child(4){
+	padding-top:0;
+}
+
+div.container>div.main-container>.left>.body>ul.four>li>a.item{
+	width:180px;
+	height:72px;
+}
+div.container>div.main-container>.left>.body>ul.four>li>a.item>img{
+	width:72px;
+	height:72px;
+	border-radius: 4px;
+	margin-right:10px;
+	display: inline-block;
+}
+div.container>div.main-container>.left>.body>ul.four>li>a.item>.item-text{
+	display: inline-block;
+	width:91px;
+	height:72px;
+}
+div.container>div.main-container>.left>.body>ul.four>li>a.item>.item-text>div{
+	height:36px;
+	width:100%;
+}
+div.container>div.main-container>.left>.body>ul.four>li>a.item>.item-text>div>span{
+	font-size: 12px;
+}
+div.container>div.main-container>.left>.body>ul.four>li>a.item>.item-text>p.center{
+	height:20px;
+	width:100%;
+}
+div.container>div.main-container>.left>.body>ul.four>li>a.item>.item-text>p.bottom{
+	font-size:12px;
+}
+div.container>div.main-container>.left>.body>ul.four>li>a.item>.item-text>p.bottom>span{
+	border-radius: 9px;
+	display: inline-block;
+	vertical-align: top;
+	text-align: center;
+	padding: 0 4px;
+	height: 18px;
+	line-height: 18px;
+	min-width: 28px;
+	max-width: 80px;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	color: #fff;
+	margin-left: 5px;
+	background: #ff8eb3;
+	font-size: 12px;
+}
+
+div.container>div.main-container>.right>.body>.accordion{
+	min-height: 288px;
+	width:260px;
+}
+div.container>div.main-container>.right>.body>.accordion>.item{
+	width:258px;
+	border:1px solid #ff8eb3;
+	border-radius: 5px;
+}
+div.container>div.main-container>.right>.body>.accordion>.item>p{
+	margin:5px;
+	padding:3px 10px;
+	border:1px solid#ff8eb3;
+	width:225px;
+	font-size: 12px;
+	height:24px;
+	line-height: 24px;
+	border-radius: 5px;
+}
+div.container>div.main-container>.right>.body>.accordion>.item>p:hover{
+	cursor:pointer;
+}
+div.container>div.main-container>.right>.body>.accordion>.item.active>p{
+	background-color: #ff8eb3;
+}
+div.container>div.main-container>.right>.body>.accordion>.item>.detail{
+	margin:0;
+	border:0 solid #ff8eb3;
+	width:245px;
+	height:0;
+	border-radius: 5px;
+	/*transition: all .5s linear;*/
+}
+div.container>div.main-container>.right>.body>.accordion>.item.active>.detail{
+	margin:5px;
+	border:1px solid #ff8eb3;
+	width:245px;
+	height:162px;
+	border-radius: 5px;
+}
+div.container>div.main-container>.right>.body>.accordion>.item>.detail>img{
+	margin:0;
+	height:0;
+	width:235px;
+	border-radius: 5px;
+}
+div.container>div.main-container>.right>.body>.accordion>.item.active>.detail>img{
+	margin:5px;
+	height:152px;
+	width:235px;
+	border-radius: 5px;
+}
+
+/*****************************主体结束*/
+
+

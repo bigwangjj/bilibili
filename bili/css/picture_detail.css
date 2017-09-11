@@ -1,0 +1,185 @@
+
+
+header>input{
+	width:275px;
+}
+
+div.bumNav{
+		width:1000px;
+	margin:0 auto;
+		height:30px;
+}
+div.bumNav>ul{
+		height:30px;
+		line-height: 30px;
+		border-bottom:1px solid darkgrey;
+}
+div.bumNav>ul>li{
+		height:30px;
+		line-height: 30px;
+		float:left;
+		font-weight:900;
+		color:darkgrey;
+}
+div.bumNav>ul>li>a{
+		height:30px;
+		line-height: 30px;
+		font-weight: normal;
+}
+
+div.bigBox{
+		width:1000px;
+	margin:0 auto;
+		height:720px;
+		background-color: #F0F0F0;
+}
+div.bigBox>div.bgImgBox{
+		width:1000px;
+		height:600px;
+		/*margin:0 0 10px 0;*/
+		position: relative;
+		border:1px solid #c0c0c0;
+		border-top:none
+		/*background-color: #fff;*/
+}
+div.bigBox>div.bgImgBox>a{
+		width:920px;
+		height:540px;
+		margin:30px 40px;
+		position: absolute;
+		display: none;
+		overflow: hidden;
+}
+div.bigBox>div.bgImgBox>a.active{
+		display:block;
+}
+div.bigBox>div.bgImgBox>a>img{
+		width:920px;
+		height:540px;
+}
+div.bigBox>div.smImgBox{
+		width:1000px;
+		height:120px;
+		background-color: #F0F0F0;
+		border:1px solid #c0c0c0;
+		border-top:none
+}
+div.bigBox>div.smImgBox>div.prevImg{
+		width:148px;
+		height:120px;
+		float:left;
+		margin-right:10px;
+
+}
+div.bigBox>div.smImgBox>div.prevImg>a{
+		width:138px;
+		height:110px;
+		margin:5px;
+		position: relative;
+}
+div.bigBox>div.smImgBox>div.prevImg>a>img{
+		width:100%;
+		height:100%;
+}
+div.bigBox>div.smImgBox>div.nextImg{
+		width:148px;
+		height:120px;
+		float:right;
+
+}
+div.bigBox>div.smImgBox>div.nextImg>a{
+		width:138px;
+		height:110px;
+		margin:5px;
+		position: relative;
+}
+div.bigBox>div.smImgBox>div.nextImg>a>img{
+		width:100%;
+		height:100%;
+}
+div.bigBox>div.smImgBox>div.nextImg>a>img:hover{
+		opacity: .5;
+}
+div.bigBox>div.smImgBox>div.prevImg>a>img:hover{
+		opacity: .5;
+}
+div.bigBox>div.smImgBox>div>a>p{
+		position:absolute;
+		left:20px;
+		top:80px;
+		color:#fff;
+}
+div.bigBox>div.smImgBox>div.thisImg{
+		width:680px;
+		height:120px;
+		float:left;
+		margin-right:10px;
+		position: relative;
+}
+
+div.bigBox>div.smImgBox>div.thisImg>button{
+		width:25px;
+		height:35px;
+		float:left;
+		outline:none;
+		border: none;
+		border-radius:5px;
+		position:absolute;
+		top:40px;
+		z-index: 20;
+		display: none;
+}
+div.bigBox>div.smImgBox>div.thisImg>button.btnLeft{
+		left:-20px;
+		margin-right:5px;
+		background:url(../material/images/ad-arraw-hover.png) no-repeat 0 0;
+}
+div.bigBox>div.smImgBox>div.thisImg>button.btnRight{
+		left:670px;
+		margin-left:5px;
+		background:url(../material/images/ad-arraw-hover.png) no-repeat 0 -36px;
+}
+div.bigBox>div.smImgBox>div.thisImg>button.btnLeft.disabled{
+		margin-right:5px;
+		background:url(../material/images/ad-arraw.png) no-repeat 0 0;
+}
+div.bigBox>div.smImgBox>div.thisImg>button.btnRight.disabled{
+		margin-left:5px;
+		background:url(../material/images/ad-arraw.png) no-repeat 0 -35px;
+}
+
+div.bigBox>div.smImgBox>div.thisImg>div.aside{
+	width:680px;
+		height:120px;
+		overflow: hidden;
+		position: relative;
+}
+div.bigBox>div.smImgBox>div.thisImg>div.aside>div.inner{
+		width:2000px;
+		height:120px;
+		position: absolute;
+		left:0;
+		transition:all 0.5s linear;
+
+}
+div.bigBox>div.smImgBox>div.thisImg>div.aside>div.inner>a{
+		width:126px;
+		height:100px;
+		margin:5px 5px 15px 5px;
+		border:2px solid transparent;
+		position: relative;
+		float:left;
+}
+div.bigBox>div.smImgBox>div.thisImg>div.aside>div.inner>a.active{
+		border:2px solid red;
+}
+div.bigBox>div.smImgBox>div.thisImg>div.aside>div.inner>a>p{
+		position:absolute;
+		left:50px;
+		top:95px;
+		z-index: 1;
+}
+div.bigBox>div.smImgBox>div.thisImg>div.aside>div.inner>a>img{
+		width:126px;
+		height:100px;
+}

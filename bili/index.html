@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html ng-app="home">
+<head lang="zh-cn">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+	<meta http-equiv="x-ua-compatible" content="IE=edge">
+	<title></title>
+	<!--[if lt IE 9]>
+        <script src="important/js/html5shiv.min.js"></script>
+        <script src="important/js/respond.min.js"></script>
+    <![endif]-->
+	<script src="important/js/jquery-1.11.3.js"></script>
+	<link rel="stylesheet" href="css/b_home.css"/>
+	<link rel="stylesheet" href="css/b_common.css"/>
+
+
+</head>
+<body ng-controller="homeCtrl">
+
+<header>
+
+</header>
+
+
+<section>
+	<div class="main-nav">
+			<div class="nav">
+				<ul>
+					<li class="index"><a href=""><i></i><s>首页</s></a></li>
+					<li><a href="forum.html"><i>385</i><s>论坛</s></a></li>
+					<li><a href="picture.html"><i>777</i><s>图区</s></a></li>
+				</ul>
+			</div>
+	</div>
+
+	<div class="container">
+		<!-- 主体顶部，有轮播的部分。。。。开始-->
+		<div class="top-container">
+			<div class="con-left">
+				<div class="pic">
+					<a href="" ng-repeat="left in lb_left"><img ng-src="material/bilibili/section/{{left.lImg}}" alt=""/></a>
+
+				</div>
+				
+				<ul class="dom">
+					<li class=""></li>
+					<li></li>
+					<li></li>
+					<li></li>
+					<li></li>
+				</ul>
+
+				<ol class="text">
+					<li ng-repeat="left in lb_left">{{left.content}}</li>
+					<!--<li>黑名单功能上线啦</li>-->
+					<!--<li>碧蓝航线开服啦</li>-->
+					<!--<li>妖狐小红娘哟</li>-->
+					<!--<li>当心耳朵怀孕</li>-->
+				</ol>
+			</div>
+
+			<div class="con-right">
+
+
+				<ul class="yesterday active">
+					<li ng-repeat="right_01 in lb_right_01"><a href="">
+						<img src="material/bilibili/section/{{right_01.lImg}}">
+						<div class="mask">
+							<p>{{right_01.top}}</p>
+							<i>UP主:{{right_01.up}}</i>
+							<s>播放:{{right_01.play}}</s>
+							<span>{{right_01.top}}</span>
+						</div>
+					</a></li>
+				</ul>
+
+				<ul class="today">
+					<li ng-repeat="right_02 in lb_right_02"><a href="">
+						<img src="material/bilibili/section/{{right_02.lImg}}">
+						<div class="mask">
+							<p>{{right_02.top}}</p>
+							<i>UP主:{{right_02.up}}</i>
+							<s>播放:{{right_02.play}}</s>
+							<span>{{right_02.top}}</span>
+						</div>
+					</a></li>
+					</ul>
+
+				<ul class="tomorrow">
+					<li ng-repeat="right_03 in lb_right_03"><a href="">
+						<img src="material/bilibili/section/{{right_03.lImg}}">
+						<div class="mask">
+							<p>{{right_03.top}}</p>
+							<i>UP主:{{right_03.up}}</i>
+							<s>播放:{{right_03.play}}</s>
+							<span>{{right_03.top}}</span>
+						</div>
+					</a></li>
+				</ul>
+
+				<div class="lb"></div>
+				<div class="rb"></div>
+
+			</div>
+
+			<div style="clear:both"></div>
+		</div>
+
+<!-- 主体顶部，有轮播的部分。。。。结束-->
+
+
+
+		<!-- 核心主体可重用构造·····开始-->
+		<div class="main-container">
+			<div class="left">
+				<div class="head">
+					<span></span>
+					<a href="">动画</a>
+					<div class="ul">
+						<a class="active" href="">有新动态<span></span></a>
+						<a href="">最新投稿<span></span></a>
+					</div>
+
+					<div class="img-text">
+						<i></i>
+						<a href="">你是个妹控啊？</a>
+					</div>
+
+					<div class="more">
+						<a href="">更多<span></span></a>
+					</div>
+					<div class="refresh">
+						<span></span>
+						<b>1234</b>
+						<i>条新动态</i>
+					</div>
+				</div>
+
+				<div class="body">
+					<ul class="five">
+						<li ng-repeat="cartoon1 in cartoon_01">
+							<a href="" class="pic">
+								<img src="material/bilibili/section/{{cartoon1.lImg}}">
+								<div class="medal"></div>
+								<span>{{cartoon1.pTime}}</span>
+								<div class="mask">
+									<p>这是会动的弹幕</p>
+								</div>
+							</a>
+							<a href="" class="text">
+								<p>{{cartoon1.content}}</p>
+								<div class="play active">
+									<span class="lb"><i></i>{{cartoon1.play}}</span>
+									<span class="rb"><i></i>{{cartoon1.love}}</span>
+								</div>
+							</a>
+						</li>
+
+					</ul>
+
+
+
+				</div>
+			</div>
+
+
+			<div class="right">
+				<div class="head">
+					<h3>排行</h3>
+					<a class="active">全部<span></span></a>
+					<a>原创<span></span></a>
+					<select>
+						<option value="">三日</option>
+						<option value="">一周</option>
+					</select>
+				</div>
+
+				<div class="body">
+					<ul>
+						<li class="first"><i>1</i><img src="material/bilibili/section/banner01.jpg">
+							<a href="">
+								<div>【神BGM】你没听过这首BGM算我输</div>
+								<span>综合评分：80.5</span>
+							</a>
+						</li>
+						<li><i>2</i>
+							<a href="">B站可以公开的情报</a>
+						</li>
+						<li><i>3</i>
+							<a href="">【东方同人动画】密封活动记录</a>
+						</li>
+						<li><i>4</i>
+							<a href="">7分钟看完《FateZero》</a>
+						</li>
+						<li><i>5</i>
+							<a href="">【著作权】夏达与夏天岛版权</a>
+						</li>
+						<li><i>6</i>
+							<a href="">盘点最牛女声优</a>
+						</li>
+						<li><i>7</i>
+							<a href="">【补番】那些年的经典作品</a>
+						</li>
+					</ul>
+
+					<a href="" class="more" >查看更多......</a>
+				</div>
+			</div>
+
+			<div style="clear:both"></div>
+		</div>
+
+		<!-- 核心主体可重用构造·······结束-->
+
+
+
+
+		<!-- 核心主体可重用构造·····开始-->
+		<div class="main-container">
+			<div class="left">
+				<div class="head">
+					<span class="fj"></span>
+					<a href="">番剧</a>
+					<div class="date">
+						<a class="active" href="" name="最新" ng-click="searchName()">最新<span></span></a>
+						<a href="" name="一">一<span></span></a>
+						<a href="" name="二">二<span></span></a>
+						<a href="" name="三">三<span></span></a>
+						<a href="" name="四">四<span></span></a>
+						<a href="" name="五">五<span></span></a>
+						<a href="" name="六">六<span></span></a>
+						<a href="" name="日">日<span></span></a>
+
+					</div>
+
+					<div class="new">
+						<a href="">新番时间表<span></span></a>
+					</div>
+
+				</div>
+
+				<div class="body">
+					<ul class="four">
+						<li ng-repeat="fj01 in fj track by $index">
+							<a class="item">
+								<img src="material/bilibili/section/{{fj01.lImg}}">
+								<div class="item-text">
+									<div><span>{{fj01.content}}</span></div>
+									<p class="center"></p>
+									<p class="bottom">更新至<span>{{fj01.num}}话</span></p>
+								</div>
+							</a>
+						</li>
+
+					</ul>
+
+
+
+				</div>
+			</div>
+
+
+			<div class="right">
+				<div class="head">
+					<h3>排行</h3>
+					<a class="active">全部<span></span></a>
+					<a>原创<span></span></a>
+					<select>
+						<option value="">三日</option>
+						<option value="">一周</option>
+					</select>
+				</div>
+
+				<div class="body">
+					<div class="accordion">
+						<div class="item active">
+							<p>自来也的豪杰物语</p>
+							<div class="detail">
+								<img src="material/bilibili/section/acc01.jpg">
+							</div>
+						</div>
+						<div class="item">
+							<p>古装风：夏暖妆</p>
+							<div class="detail">
+								<img src="material/bilibili/section/acc02.jpg">
+							</div>
+						</div>
+						<div class="item">
+							<p>崩坏3：我们一起上吧！</p>
+							<div class="detail">
+								<img src="material/bilibili/section/acc03.jpg">
+							</div>
+						</div>
+					</div>
+
+
+					
+				</div>
+			</div>
+
+			<div style="clear:both"></div>
+		</div>
+
+		<!-- 核心主体可重用构造·······结束-->
+
+
+
+
+
+	</div>
+
+
+
+
+	<div style="clear: both"></div>
+</section>
+
+
+
+<footer>
+
+</footer>
+
+<script src="js/b_common.js"></script>
+<script src="angularJS/angular.js"></script>
+<script src="angularJS/angular-route.js"></script>
+<script src="js/b_home.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,1278 @@
+
+		var gpmtips = (function () {
+			
+			if(window['no_webtips_flag']){
+				return {init:function(){}};
+			}
+			var d = document,
+					nu = navigator.userAgent.toLowerCase(),
+					ie = nu.indexOf("msie") != -1,
+					bv = (nu.match(/.+(?:rv|it|ra|ie)[\/: ]([\d.]+)/) || [0, '0'])[1],
+					ie7 = ie && bv.substr(0, 1) == '7',
+					ie6 = ie && bv.substr(0, 1) == '6',
+					opera = nu.indexOf("opera") != -1,
+					dt = new Date(),
+					api = 'http://apps.game.qq.com/client_pop/api.php?',
+					api_go = 'http://apps.game.qq.com/client_pop/doGPMReport?',
+					api_go_judge = 'http://apps.game.qq.com/client_pop/webtips?',
+					api_go_judge_admore = 'http://apps.idata.qq.com/outer/admore_recommend?',
+					//apicfg = 'http://apps.game.qq.com/client_pop/tpl/webtips/',
+					apicfgori = 'http://ossweb-img.qq.com/images/clientpop/webtips/',
+					apijson = 'http://ossweb-img.qq.com/images/clientpop/js/json.js',
+					game = '',
+					games = new Array('cf', 'wf', 'nz', 'lol', 'xy', 'woz', 'ava', 'x5', 'dj2', 'dzs', 'speed', 'nba2k', 'dnf', 'bns', 'smite', 'codo', 'codol', 'zzlt', 'tps', 'fifa', 'x52', "wuxia", 'mh','jf','tthl','yxzj','age','yl'),
+					adm_gray_games = new Array('dnf','cf'),
+					gamesAct = new Array('cf','x5','nz','x52','codol'),////活动推荐助手接入业务
+					newWebtipsApiGray = new Array('codol','codo','speed','nba2k','x5','dnf','age','tthl','nz'),//新版webtips接口灰度
+					newWebtipsApiFlag = false,
+					cn = 'ractWrap',
+					ckpre = 'gpmtips',
+					ckact = ckpre + '_data',
+					ckact_specific = ckact + '_specific', //add by kerwin
+					ckact_admore = ckact + '_admore', //add by kerwin
+					ckcfg = ckpre + '_cfg',
+					ckcfgadmore = ckpre + '_cfg_admore',
+					ckhour = 30,
+					ckhouro = 60 * 24 * 365,
+					ckhourd = 60 * 24 * 14,
+					//ckhourd = 10,
+					folder = 2,
+					currentUrl = '', //当前页面地址
+					// 展现形式文件夹 1: 右下角弹框  2: 右侧浮层 3: 左侧浮层  4: 左下角弹框
+					style=1,
+					// 活动对象
+					sAct = null,
+					grey = true,//灰度
+
+					webtipsIsShowed = false;
+					
+					var _ad_specific_data = new Array(); //add by kerwin
+					var _ad_data = new Array(); //add by kerwin
+					var _ad_admore_data = new Array(); //add by kerwin
+					var templateUrl = '';
+
+					var adMoreDataMap = {}; //立体化营销渠道素材数据保存
+					var multiChannelLogReportPre = "http://apps.idata.qq.com/outer/ad_log_report";
+
+
+					var stylemap = {
+						1: {
+							cssapi: "http://ossweb-img.qq.com/images/clientpop/css/1/"
+						},
+						2: {
+							cssapi: "http://ossweb-img.qq.com/images/clientpop/css/2/"
+						},
+						3: {
+							cssapi: "http://ossweb-img.qq.com/images/clientpop/css/3/"
+						},
+						4:{
+							cssapi: "http://ossweb-img.qq.com/images/clientpop/css/4/"
+						}
+					};
+					var Tween = {
+						Quart: {
+							easeOut: function(t, b, c, d) {
+								return - c * (t /= d) * (t - 2) + b
+							}
+						}
+					};
+			
+					var slideAct = function (id,pos){
+						this._x = document.getElementById(id);
+						this._d = 321;
+						this.t = 0;
+						this.c = this._d;
+						this.b = -this._d;
+						this.d=30;
+						this._s =1;
+						this._p = pos;
+					}
+
+			slideAct.prototype = {
+				init: function (){
+					 this._x.style[this._p] = this.b +'px';
+					 if( this._p == "right"){
+						 var arrow = document.getElementById('layerArrow');
+						 arrow.style.backgroundPosition = "-50px -30px";
+					 }
+				},
+				slide: function() {
+					if (this.c && this.t < this.d) {
+						this._x.style[this._p] = Math.round(Tween.Quart.easeOut(this.t++, this.b, this.c, this.d)) + 'px';
+						setTimeout(Bind(this, this.slide), 10)
+					} else {
+						var arrow = document.getElementById('layerArrow');
+						if( this._p == "left"){
+							if (this.b==-this._d){
+								arrow.style.backgroundPosition = "-50px -30px"
+								this.b=0;
+								this.c=-this._d;
+							}else{
+								arrow.style.backgroundPosition = "-50px 0"
+								this.b=-this._d;
+								this.c=this._d				
+							}
+						}
+						else{
+							if (this.b==-this._d){
+								arrow.style.backgroundPosition = "-50px 0"
+								this.b=0;
+								this.c=-this._d;
+							}else{
+								arrow.style.backgroundPosition = "-50px -30px"
+								this.b=-this._d;
+								this.c=this._d				
+							}
+						}
+						this.t=0;
+					}
+				},
+				isOpen : function(){
+					var arrow = document.getElementById('layerArrow');
+					if( this._p === "right"){
+						return arrow.style.backgroundPosition === "-50px -30px"
+					}
+					else{
+						return arrow.style.backgroundPosition === "-50px 0px"
+					}
+				}
+			}
+
+			function Bind(object, fun) {
+				var args = Array.prototype.slice.call(arguments).slice(2);
+				return function() {
+					return fun.apply(object, args.concat(Array.prototype.slice.call(arguments)))
+				}
+			};
+
+			function doAds() {
+				//console.log("doAds function start...");
+				if (typeof TgWebtipsGPMAds != 'undefined' && TgWebtipsGPMAds.iRet == 0) {
+					var ad = TgWebtipsGPMAds.data;
+					var _ad = new Array();
+					var _ad_specific = new Array(); //add by kerwin
+					var _j = -1;
+					var _k = -1;
+					var index  = -1;
+					var index_specific = -1;
+					var isInSpecific = false;
+					if (ad instanceof Array) {
+						for (var i = 0; i < ad.length; i++) {
+							//console.log("isCustomUrls: "+ad[i].isCustomUrls);
+							if(ad[i].isCustomUrls == 0){
+								_ad.push({
+									id: ad[i].actId,
+									url: ad[i].url,
+									value: '0,0',
+									style:ad[i].style
+								});
+								index++;
+							}else{
+								_ad_specific.push({
+									id: ad[i].actId,
+									url: ad[i].url,
+									value: '0,0',
+									style:ad[i].style,
+									curUrl:currentUrl
+								});
+								index_specific++;
+							}
+							if (chkHara(ad[i].actId)) { //chkHara函数返回值: false表示已经达到折叠次数并且在两周的限期内，其他返回true
+								if(ad[i].isCustomUrls == 1){
+									_j = index_specific;  //保留最后一个有效的游标
+								}else{
+									_k = index;  //保留最后一个有效的游标
+								}
+							}
+						}
+						//alert(JSON.stringify(_ad));
+						
+						if(_ad.length > 0){
+							sCookie(ckact, JSON.stringify(_ad), ckhour);
+						}
+						if(_ad_specific.length > 0){
+							sCookieSpecific(ckact_specific,JSON.stringify(_ad_specific), ckhour); //???¨urlμ￥?àó?áííaò???cookie
+						}
+						//console.log(ckact+" cookie: "+JSON.stringify(_ad));
+						//console.log(ckact_specific+" cookie: "+JSON.stringify(_ad_specific));
+						// if (_j == -1) { //所有的chkHara返回都是false，说明所有的弹窗都不能弹出
+						// 	renAds(_ad[Math.floor(Math.random() * _ad.length + 1) - 1], true)
+						// } else {
+						// 	renAds(_ad[_j], false)
+						// }
+						//console.log("index value: "+index);
+						//console.log("index_specific value: "+index_specific);
+						//console.log("_j value: "+_j);
+						//console.log("isInSpecific value: "+isInSpecific);
+						if (_j == -1 && _k == -1) { //所有的chkHara返回都是false，说明所有的弹窗都不能弹出
+							if(_ad_specific.length > 0){ //优先
+								renAds(_ad_specific[Math.floor(Math.random() * _ad_specific.length + 1) - 1], true);
+								return;
+							}
+							if(_ad.length > 0){
+								renAds(_ad[Math.floor(Math.random() * _ad.length + 1) - 1], true);
+								return;
+							}
+						} 
+
+						if(_j != -1){
+							renAds(_ad_specific[_j], false);
+							return;
+						}
+						if(_k != -1){
+							renAds(_ad[_k], false);
+							return;
+						}
+							
+					}
+				}
+				//console.log("doAds function end...");
+			}
+			function IsPC()
+			{
+				var userAgentInfo = navigator.userAgent;
+				var Agents = new Array("Android", "iPhone", "SymbianOS", "Windows Phone", "iPad", "iPod");
+				var flag = true;
+				for (var v = 0; v < Agents.length; v++) {
+					if (userAgentInfo.indexOf(Agents[v]) > 0) {
+						flag = false;
+						break;
+					}
+				}
+				return flag;
+			}
+			function renAds(data, hide,from) {
+				//console.log("renAds function start...");
+				if (data) {
+					// 获得返回的广告样式
+					if(typeof data.style !== "undefined"){
+						style = data.style;
+					}
+					
+					var sty = stylemap[style];
+					var cssapi = sty.cssapi;
+					// 根据业务加载不同css
+					if(game == 'tps' ){
+						cssapi = cssapi + 'tps.css';
+					}else if(game == 'cf'){
+						cssapi = cssapi +'cf.css';
+					}else{
+						cssapi = cssapi +'default.css';
+					}
+					loadStyle(cssapi);
+				
+					asTpl(data, hide);
+					
+					var actpop = data.value;
+					var popupdate = false;
+					if (actpop) {
+						var actpopArr = actpop.split(',');
+						if (!hide && actpopArr.length == 2) {
+							uCookie(data.id, 'value_p', 1);
+							popupdate = true;
+						} else if (hide) {
+							popupdate = true;
+						}
+					}
+					if (!popupdate) {
+						uCookie(data.id, 'value', '1,0');
+					}
+					if (hide) {
+						resetcss(true);
+					} else {
+						r('pop', data.id,from,data.url);
+						resetcss(false);
+					}
+					if (ie6) {
+						//pos();
+						ade(window, "scroll", pos);
+						ade(window, "resize", pos);
+					}
+				}
+				//console.log("renAds function end...");
+			}
+			// assemble template
+			function asTpl(data, hide){
+				var div = d.createElement("div");
+				//判断页面是否已经加载过
+				if(d.getElementById(cn)){
+					//移除页面DOM
+					var child=document.getElementById("ractWrap");
+					child.parentNode.removeChild(child);
+				}
+				div.id = cn;
+				var ifr = d.createElement('iframe');
+				// right
+				if(style == "2"){
+					div.className = 'layer_right layer';
+					var arrow = '<div class="layer_arrow column"><div class="layer_item" onclick="javascript:gpmtips.init(' + "'cl'" + ',true);"><span class="arrow arrow_left" id="layerArrow" style="background-position: -50px 0px;"></span></div></div><div class="layer_tit column"><div class="layer_item"><em class="layer_tit_txt">热门活动</em></div></div>';
+					var box = '<div class="ract-content column"><div class="layer_item" id="ractBox"></div></div>';
+					div.innerHTML = arrow + box;
+				}
+				// left
+				else if(style == "3"){
+					div.className = 'layer_left layer';
+					var arrow = '<div class="layer_arrow column"><div class="layer_item" onclick="javascript:gpmtips.init(' + "'cl'" + ',true);"><span class="arrow arrow_left" id="layerArrow" style="background-position: -50px 0px;"></span></div></div><div class="layer_tit column"><div class="layer_item"><em class="layer_tit_txt">热门活动</em></div></div>';
+					var box = '<div class="ract-content column"><div class="layer_item" id="ractBox"></div></div>';
+					div.innerHTML = arrow + box;
+				}
+				// right bottom
+				else{
+					div.className = 'ract-box';
+					var box = '<div class="ract-content" id="ractBox" style="' + (hide ? "display:none;" : "") + '">';
+					
+					box += '<a class="collapse02" title="关闭" href="javascript:gpmtips.init('+"'cl'"+',true);">关闭</a>';
+					
+					box += '</div>';
+					var close = '<a class="expand" id="expandBtn" href="javascript:gpmtips.init(' + "'op'" + ',true);" style="display:' + (hide ? "block" : "none") + ';">' + game.toUpperCase() + '活动推荐</a>'
+					div.innerHTML = close + box;
+				}
+				ifr.id = 'ractIfr';
+				ifr.name = 'ractIfr';
+				ifr.className = 'ract-ifr';
+				ifr.setAttribute('data', data.id);
+				ifr.setAttribute('frameborder', "no", 0);
+				ifr.setAttribute('border', "no");
+				ifr.setAttribute('scrolling', "no");
+				ifr.onload = function () {
+				};
+				d.body.appendChild(div);
+				getelm('ractBox').appendChild(ifr);
+				
+				var tarPage = getString(data.url,'tarPage');
+				//考虑目标链接为空情况
+				if(tarPage){
+					if(!samePagecheck(tarPage)){
+						getelm('ractWrap').style.cssText = "display:none;";
+						return;
+					}
+					ifr.src = data.url + '&url=' + window.location;
+				}else{
+					ifr.src = data.url + '?url=' + window.location;
+				}
+				
+				// left or right
+				var side = "";
+				if( style == "2" ){
+					side = "right";
+				}
+				else if( style == "3" ){
+					side = "left";
+				}
+				if( style == "3" || style == "2"){
+					sAct = new slideAct('ractWrap', side);
+					sAct.init();
+					if( hide === false){
+						sAct.slide();
+					}
+				}
+			}
+			function uCookie(id, k, v, m) {
+				//console.log("uCookie function start...");
+				var updateFlag = false;
+				var _ckact = gCookie(ckact);
+				if (_ckact) {
+					_ckact = JSON.parse(_ckact)
+					for (var i = 0; i < _ckact.length; i++) {
+						if (_ckact[i].id == id) {
+							if (m & k == 'value') {
+								var _v = _ckact[i].value.split(',');
+								_ckact[i].value = _v[0] + ',' + (pi(_v[1]) + v);
+							} else {
+								if (k == 'value') {
+									_ckact[i].value = v;
+								} else if (k == 'value_p') {
+									var _v = _ckact[i].value.split(',');
+									_ckact[i].value = (pi(_v[0]) + v) + ',' + _v[1];
+									if ((pi(_v[0]) + v) >= folder) {
+										updateHara(id);
+									}
+								} else if (k == 'url') {
+									_ckact[i].url = v
+								}
+							}
+							updateFlag = true;
+						}
+					}
+					if(updateFlag){
+						sCookie(ckact, JSON.stringify(_ckact));
+					}
+				}
+				updateFlag = false;
+				var _ckact_specific = gCookie(ckact_specific);
+				if (_ckact_specific) {
+					_ckact_specific = JSON.parse(_ckact_specific)
+					for (var i = 0; i < _ckact_specific.length; i++) {
+						if (_ckact_specific[i].id == id) {
+							if (m & k == 'value') {
+								var _v = _ckact_specific[i].value.split(',');
+								_ckact_specific[i].value = _v[0] + ',' + (pi(_v[1]) + v);
+							} else {
+								if (k == 'value') {
+									_ckact_specific[i].value = v;
+								} else if (k == 'value_p') {
+									var _v = _ckact_specific[i].value.split(',');
+									_ckact_specific[i].value = (pi(_v[0]) + v) + ',' + _v[1];
+									if ((pi(_v[0]) + v) >= folder) {
+										updateHara(id);
+									}
+								} else if (k == 'url') {
+									_ckact_specific[i].url = v
+								}
+							}
+						}
+						updateFlag = true;
+					}
+					if(updateFlag){
+						sCookieSpecific(ckact_specific, JSON.stringify(_ckact_specific));
+					}
+				}
+
+
+				//更新admore cookie
+				updateFlag = false;
+				var _ckact_admore = gCookie(ckact_admore);
+				if (_ckact_admore) {
+					_ckact_admore = JSON.parse(_ckact_admore)
+					for (var i = 0; i < _ckact_admore.length; i++) {
+						if (_ckact_admore[i].id == id) {
+							if (m & k == 'value') {
+								var _v = _ckact_admore[i].value.split(',');
+								_ckact_admore[i].value = _v[0] + ',' + (pi(_v[1]) + v);
+							} else {
+								if (k == 'value') {
+									_ckact_admore[i].value = v;
+								} else if (k == 'value_p') {
+									var _v = _ckact_admore[i].value.split(',');
+									_ckact_admore[i].value = (pi(_v[0]) + v) + ',' + _v[1];
+									if ((pi(_v[0]) + v) >= folder) {
+										updateHara(id);
+									}
+								} else if (k == 'url') {
+									_ckact_admore[i].url = v
+								}
+							}
+						}
+						updateFlag = true;
+					}
+					if(updateFlag){
+						sCookie(ckact_admore, JSON.stringify(_ckact_admore));
+					}
+				}
+				//console.log("uCookie function end...");
+			}
+
+			function plantSpecific(){
+				if (typeof TgWebtipsGPMAds != 'undefined' && TgWebtipsGPMAds.iRet == 0) {
+					var ad = TgWebtipsGPMAds.data;
+					var _ad_specific = new Array(); //add by kerwin
+					
+					if (ad instanceof Array) {
+						for (var i = 0; i < ad.length; i++) {
+							//console.log("isCustomUrls: "+ad[i].isCustomUrls);
+							if(ad[i].isCustomUrls == 1){
+								_ad_specific.push({
+									id: ad[i].actId,
+									url: ad[i].url,
+									value: '0,0',
+									style:ad[i].style
+								});
+								
+							}
+						}
+					}
+
+					//
+					if(_ad_specific.length > 0){
+						sCookieSpecific(ckact_specific,JSON.stringify(_ad_specific), ckhour); //指定url单独用另外一个cookie
+						_ad_specific_data = _ad_specific;
+						
+					}
+					
+				}
+				getNormalData();
+			}
+
+			function plantNormal(){
+				if (typeof TgWebtipsGPMAds != 'undefined' && TgWebtipsGPMAds.iRet == 0) {
+					var ad = TgWebtipsGPMAds.data;
+					var _ad = new Array(); //add by kerwin
+					
+					if (ad instanceof Array) {
+						for (var i = 0; i < ad.length; i++) {
+							//console.log("isCustomUrls: "+ad[i].isCustomUrls);
+							if(ad[i].isCustomUrls == 0){
+								_ad.push({
+									id: ad[i].actId,
+									url: ad[i].url,
+									value: '0,0',
+									style:ad[i].style
+								});
+								
+							}
+						}
+					}
+
+					//
+					if(_ad.length > 0){
+						sCookie(ckact,JSON.stringify(_ad), ckhour); //指定url单独用另外一个cookie
+						_ad_data = _ad;
+						
+					}
+					
+				}
+				doShow();
+			}
+
+			function plantAdMore(){
+				if (typeof RES_OBJ_ADM != 'undefined' && RES_OBJ_ADM.errcode == 0) {
+					var ad = RES_OBJ_ADM.data;
+					var _ad = new Array(); //add by kerwin
+					
+					if (ad instanceof Object) {
+						for(var i in ad){
+							if(ad[i].isCustomUrls == 0){
+								_ad.push({
+									id: ad[i].task_id,
+									url: templateUrl + '?tarPage='+ad[i].popup_url+urlEncode(ad[i]),
+									value: '0,0',
+									style:ad[i].style
+								});
+								
+							}
+						}
+					}
+
+					//
+					if(_ad.length > 0){
+						sCookie(ckact_admore,JSON.stringify(_ad), ckhour); 
+						_ad_admore_data = _ad;
+						
+					}
+					
+				}
+				doShowNew();
+			}
+
+			function doShow(){
+				if(inarr(adm_gray_games, game)){
+					apicfg = apicfgori + 'adm_'+game + 'WebtipsSystemConfig.js?r=' + Math.random();
+					lsWithFail(apicfg, doCfgAdMore,'',function(){
+						//没有获取到立体化营销的配置js或者没有在线的立体化营销任务
+						doShowNew();
+					});
+				}else{
+					doShowNew();
+				}
+				
+			}
+
+			function doShowNew(){
+				//
+				var hasNormalData = false;
+				var hasSpecificData = false;
+				var hasAdMoreData = false;
+				var normalIndex = -1;
+				var specificIndex = -1;
+				if(_ad_specific_data.length){
+					hasSpecificData = true;
+					var _v = -1;
+					var _j = -1;
+					for (var i = 0; i < _ad_specific_data.length; i++) {
+						if (_ad_specific_data[i].value) {
+							var _pop = _ad_specific_data[i].value.split(',');
+							//
+							if (_pop.length == 2 && _pop[0] < folder && chkHara(_ad_specific_data[i].id)) {
+								
+									if (_v == -1) {
+										_v = _pop[0]
+										_j = i
+									} else {
+										if (_pop[0] < _v) {
+											_v = _pop[0]
+											_j = i
+										}
+									}
+								
+							}
+						}
+					}
+					//
+					specificIndex = _j;
+				}
+
+				if(_ad_data.length){
+					hasNormalData = true;
+					var _v = -1;
+					var _j = -1;
+					for (var i = 0; i < _ad_data.length; i++) {
+						if (_ad_data[i].value) {
+							var _pop = _ad_data[i].value.split(',');
+							//
+							if (_pop.length == 2 && _pop[0] < folder && chkHara(_ad_data[i].id)) {
+								
+									if (_v == -1) {
+										_v = _pop[0]
+										_j = i
+									} else {
+										if (_pop[0] < _v) {
+											_v = _pop[0]
+											_j = i
+										}
+									}
+								
+							}
+						}
+					}
+					//
+					normalIndex = _j;
+				}
+
+
+				if(_ad_admore_data.length){
+					hasAdMoreData = true;
+					var _v = -1;
+					var _j = -1;
+					for (var i = 0; i < _ad_admore_data.length; i++) {
+						if (_ad_admore_data[i].value) {
+							var _pop = _ad_admore_data[i].value.split(',');
+							//
+							if (_pop.length == 2 && _pop[0] < folder && chkHara(_ad_admore_data[i].id)) {
+								
+									if (_v == -1) {
+										_v = _pop[0]
+										_j = i
+									} else {
+										if (_pop[0] < _v) {
+											_v = _pop[0]
+											_j = i
+										}
+									}
+								
+							}
+						}
+					}
+					//
+					admoreIndex = _j;
+				}
+				if(hasAdMoreData && admoreIndex != -1){
+					renAds(_ad_admore_data[admoreIndex], false,'admore');
+					return;
+				}
+
+				//
+				if(hasSpecificData && specificIndex != -1){
+					renAds(_ad_specific_data[specificIndex], false);
+					return;
+				}
+
+				if(hasNormalData && normalIndex != -1){
+					renAds(_ad_data[normalIndex], false);
+					return;
+				}
+
+				var index = Math.floor(Math.random() * _ad_specific_data.length + 1) - 1;
+				if(hasAdMoreData && admoreIndex == -1){
+					renAds(_ad_admore_data[index], true,'admore');
+					return;
+				}
+
+				if(hasSpecificData && specificIndex == -1){
+					
+					renAds(_ad_specific_data[index], true);
+					return;
+				}
+
+				if(hasNormalData && normalIndex == -1){
+					
+					renAds(_ad_data[index], true);
+					return;
+				}
+			}
+
+			//获取非指定url活动数据
+			function getNormalData(){
+				var _ckact = gCookie(ckact);
+				if(_ckact == ''){
+					//′óoóì¨à-è?êy?Y
+					ls(api_go_judge + 'iUin=' + getuin() + '&sServiceType=' + game+'&currentUrl='+currentUrl, plantNormal);
+				}else{
+					_ckact = _ckact ? JSON.parse(_ckact) : '';
+					if (_ckact instanceof Array && _ckact.length) {
+						_ad_data = _ckact;
+					}
+					doShow();
+				}
+			}
+
+			//获取指定url活动数据，执行完成之后获取非指定url活动数据
+			function getSpecificData(){
+				var _ckact_specific = gCookie(ckact_specific);
+				if(_ckact_specific == ''){
+					ls(api_go_judge + 'iUin=' + getuin() + '&sServiceType=' + game+'&currentUrl='+currentUrl, plantSpecific);
+				}else{
+					_ckact_specific = _ckact_specific ? JSON.parse(_ckact_specific) : '';
+					if(_ckact_specific instanceof Array && _ckact_specific.length){
+						_ad_specific_data = _ckact_specific;
+					}
+					getNormalData();
+				}
+			}
+
+			function getAdMoreData(){
+				var _ckact_admore = gCookie(ckact_admore);
+				if(_ckact_admore == ''){
+					lsWithFail(api_go_judge_admore + 'uin=' + getuin() + '&appid=' + game+'&channel=webtips&currentUrl='+currentUrl, plantAdMore,'',function(){
+						doShowNew();
+					});
+				}else{
+					_ckact_admore = _ckact_admore ? JSON.parse(_ckact_admore) : '';
+					if(_ckact_admore instanceof Array && _ckact_admore.length){
+						_ad_admore_data = _ckact_admore;
+					}
+					doShowNew();
+				}
+			}
+
+			function getAds() {
+				//console.log("getAds function start...");
+				//首先获取指定url活动数据
+				getSpecificData();
+				
+				//
+			}
+			//如果活动两周内已经到达收起，以后不再自动展开
+			function chkHara(id) {
+				var _ckacto = gCookie(ckact + '_o');
+				_ckacto = _ckacto ? JSON.parse(_ckacto) : '';
+				if (_ckacto instanceof Array && _ckacto.length) {
+					for (var i = 0; i < _ckacto.length; i++) {
+						if (_ckacto[i].id == id && Math.round(new Date().getTime() / 1000) < _ckacto[i].valid) {
+							return false;
+						}
+					}
+				}
+				return true;
+			}
+
+			function updateHara(id) {
+				//console.log("updateHara function start...");
+				var _ckacto = gCookie(ckact + '_o');
+				_ckacto = _ckacto ? JSON.parse(_ckacto) : '';
+				var _exist = false;
+				var _vt = Math.round(new Date().getTime() / 1000) + (ckhourd * 60)
+				if (_ckacto instanceof Array && _ckacto.length) {
+					for (var i = 0; i < _ckacto.length; i++) {
+						if (_ckacto[i].id == id) {
+							_ckacto[i].valid = _vt.toString();
+							_exist = true;
+						}
+					}
+					if (!_exist) {
+						_ckacto.push({
+							id: id,
+							valid: _vt
+						});
+					}
+				} else {
+					_ckacto = [{
+							id: id,
+							valid: _vt
+						}]
+				}
+				//console.log('actId :' + id + ' updateHara executed');
+				sCookie(ckact + '_o', JSON.stringify(_ckacto), ckhouro);
+				return true;
+			}
+
+			function r(t, id,from,url) {
+				if(from && from == 'admore'){
+					var data = urlDecode(url);
+					var msg = data.scheme_type+'|'+data.channel_id+'|'+data.e_code+'|'+
+										data.pos_id+'|'+data.recommend_id+'|'+data.algo+'|'+data.ad_type+'|'+
+										data.task_pid+'|'+data.set_id+'|'+data.material_pid+'|'+''+
+										'|'+window.location.href+'|'+data.task_begin_time+'|'+data.task_end_time;
+					var popLogUrl = multiChannelLogReportPre+"?uin=" + getuin() + "&pid=" + data.pid + "&appid=" + 
+									data.appid + "&channel=webtips&task_id=" + data.task_id + "&material_id=" + data.material_id +
+									 "&world_id=&table_type=1&msg="+msg;
+					ls(popLogUrl,function(){})
+				}else{
+					newWebtipsApiFlag || ls(api_go + 'uin=' + getuin() + '&sServiceType=' + game + '&op=' + t + '&actId=' + id + '&channel=3', dor);
+				}
+			}
+			function dor() {
+				if (typeof TgWebtipsGPMReport != 'undefined' && TgWebtipsGPMReport.iRet == 0) {
+					var tgr = TgWebtipsGPMReport;
+					if (haspro(tgr, 'op') && haspro(tgr, 'actId') && tgr.op == "click" && tgr.actId) {
+						uCookie(tgr.actId, 'value', 1, true);
+					}
+				}
+			}
+			function resetcss(a) {
+				if (getelm('_feedback_layout')) {
+					var _css;
+					if (a) {
+						getelm(cn).className += " ract-feedback";
+					} else {
+						getelm(cn).className = "ract-box";
+					}
+				}
+			}
+			function close() {
+				if( style == "2" || style == "3" ){
+					sAct.slide();
+					// check to report
+					if(sAct.isOpen()){
+						var _actId = getelm('ractIfr').getAttribute('data');
+						r('pop', _actId);
+						uCookie(_actId, 'value_p', 1, false);
+					}
+				}
+				else{
+					getelm('ractBox').style.cssText = "display:none;";
+					getelm('expandBtn').style.cssText = "display:block;";
+				}
+				resetcss(true);
+				if (ie6) {
+					pos();
+				}
+			}
+			function open() {
+				if( style == "2" || style == "3" ){
+					sAct.slide();
+				}
+				else{
+					getelm('ractBox').style.cssText = "display:block;";
+					getelm('expandBtn').style.cssText = "display:none;";
+					
+				}
+				
+				if (ie6) {
+					pos();
+				}
+				resetcss(false);
+				var _actId = getelm('ractIfr').getAttribute('data');
+				var ifrSrc = getelm('ractIfr').getAttribute('src');
+				if(ifrSrc.indexOf('set_id') != -1 || ifrSrc.indexOf('material_id') != -1){
+					//admore ad
+					r('pop', _actId,'admore',ifrSrc);
+				}else{
+					r('pop', _actId);
+				}
+				
+				uCookie(_actId, 'value_p', 1, false);
+			}
+			function getuin() {
+				return gCookie("pt2gguin") ? gCookie("pt2gguin").substr(1).replace(/\b(0+)/gi, "") : '';
+			}
+			function getelm(id) {
+				return "string" == typeof id ? d.getElementById(id) : id
+			}
+			function pi(i) {
+				return parseInt(i);
+			}
+			function haspro(e, key) {
+				return e.hasOwnProperty(key);
+			}
+			function inarr(a, e) {
+				var s = String.fromCharCode(2);
+				var r = new RegExp(s + e + s);
+				return (r.test(s + a.join(s) + s));
+			}
+			function sCookieSpecific(name, value, e) {
+				var dt = new Date();
+				var e = arguments[2] || ckhour;
+				if (e) {
+					dt.setMinutes(dt.getMinutes() + pi(e));
+				}
+
+				var cookietemp = escape(name) + '=' + escape(value) + (e ? ';expires=' + dt.toUTCString() : '');
+
+				d.cookie = cookietemp;
+			}
+			function sCookie(name, value, e) {
+				var dt = new Date();
+				var e = arguments[2] || ckhour;
+				if (e) {
+					dt.setMinutes(dt.getMinutes() + pi(e));
+				}
+				
+				//alert("path null");
+				var cookietemp = escape(name) + '=' + escape(value) + (e ? ';path=/;expires=' + dt.toUTCString() : '');
+				d.cookie = cookietemp;
+			}
+			function gCookie(name) {		
+				var sRE = "(?:; |^)" + name + "=([^;]*);?";
+				var oRE = new RegExp(sRE);
+				
+				if (oRE.test(document.cookie)) {
+					return unescape(RegExp["$1"]);
+				} else {
+					return '';
+				}
+				
+				
+			}
+			function loadStyle(url, fn) {
+				var h = d.getElementsByTagName('HEAD').item(0);
+				var s = d.createElement("link");
+				s.rel = 'stylesheet';
+				s.type = 'text/css';
+				s.media = 'all';
+				s.href = url;
+				h.appendChild(s);
+			}
+			function ade(obj, evt, fn) {
+				if (obj.addEventListener) {
+					obj.addEventListener(evt, fn, false);
+				} else if (obj.attachEvent) {
+					obj.attachEvent('on' + evt, fn);
+				}
+			}
+			function pos() {
+				var _fh = 0;
+				if (getelm('_feedback_layout')) {
+					_fh = 23;
+				}
+				if (ie6) {
+					_fh = 0;
+				}
+				getelm(cn).style.top = d.documentElement.scrollTop + d.documentElement.clientHeight - getelm(cn).offsetHeight - 2 - _fh + "px";
+			}
+			function ls(url, callback, charset) {
+				var script = document.createElement("script");
+				script.type = "text/javascript";
+				if (charset) {
+					script.setAttribute("charset", charset);
+				}
+				if (script.readyState) {
+					script.onreadystatechange = function () {
+						if (script.readyState == "loaded" || script.readyState == "complete") {
+							script.onreadystatechange = null;
+							callback();
+							document.getElementsByTagName("head")[0].removeChild(this);
+						}
+					};
+				} else {
+					script.onload = function () {
+						callback();
+						document.getElementsByTagName("head")[0].removeChild(this);
+					};
+				}
+				script.src = url;
+				document.getElementsByTagName("head")[0].appendChild(script);
+			}
+			function lsWithFail(url, callback, charset,failFunc) {
+				var script = document.createElement("script");
+				script.type = "text/javascript";
+				if (charset) {
+					script.setAttribute("charset", charset);
+				}
+				if (script.readyState) {
+					script.onreadystatechange = function () {
+						if (script.readyState == "loaded" || script.readyState == "complete") {
+							script.onreadystatechange = null;
+							callback();
+							document.getElementsByTagName("head")[0].removeChild(this);
+						}
+					};
+					if (script.readyState === "loaded" && script.nextSibling == null) {
+						if (failFunc) {
+							failFunc()
+						}
+					}
+				} else {
+					script.onload = function () {
+						callback();
+						document.getElementsByTagName("head")[0].removeChild(this);
+					};
+					script.onerror = function () {
+						if (failFunc) {
+							failFunc()
+						}
+						d.onerror = null
+					}
+				}
+				script.src = url;
+				document.getElementsByTagName("head")[0].appendChild(script);
+			}
+
+			/** 
+			 * param 将要转为URL参数字符串的对象 
+			 * key URL参数字符串的前缀 
+			 * encode true/false 是否进行URL编码,默认为true 
+			 *  
+			 * return URL参数字符串 
+			 */  
+			function urlEncode (param, key, encode) {  
+			  if(param==null) return '';  
+			  var paramStr = '';  
+			  var t = typeof (param);  
+			  if (t == 'string' || t == 'number' || t == 'boolean') {  
+				paramStr += '&' + key + '=' + ((encode==null||encode) ? encodeURIComponent(param) : param);  
+			  } else {  
+				for (var i in param) {  
+				  var k = key == null ? i : key + (param instanceof Array ? '[' + i + ']' : '.' + i);  
+				  paramStr += urlEncode(param[i], k, encode);  
+				}  
+			  }  
+			  return paramStr;  
+			};
+			function urlDecode (paramStr) {  
+			  if(paramStr==null) return {};  
+			  var res = {};
+			  var arr = paramStr.split('&');
+			  var eachStr='';
+			  var eachArr = [];
+			  var eachKey='';
+			  var eachValue='';
+			  if(arr.length > 0){
+				for(var i=0;i<arr.length;i++){
+					eachStr = arr[i];
+					eachArr = eachStr.split('=');
+					if(eachArr.length == 2){
+						eachKey = eachArr[0];
+						eachValue = eachArr[1];
+						res[eachKey] = eachValue;
+					}
+				}
+			  }
+			  
+			  return res;  
+			};  
+			function doCfg() {
+				//console.log("doCfg function start...");
+				if (typeof config != 'undefined') {
+					if (haspro(config, 'iShowCount') && haspro(config, 'iSendApi') && haspro(config, 'iOnlineCount')) {
+						sCookie(ckcfg, JSON.stringify(config));
+						if (pi(config.iOnlineCount) > 0) {
+							if (pi(config.iShowCount)) {
+								folder = pi(config.iShowCount);
+							}
+							if (pi(config.iSendApi)) {
+								ckhour = pi(config.iSendApi);
+							}
+							getAds();
+						}
+						else{
+							//上报 judge
+							var url = api_go+"channel=3&sServiceType="+game+"&uin="+getuin()+"&op=judge&actId=0&iRet=1&sMsg=no data";
+							ls(url, function(){});
+						}
+					}
+				}
+			}
+			function doCfgAdMore() {
+				//console.log("doCfg function start...");
+				if (typeof config != 'undefined') {
+					if (haspro(config, 'iShowCount') && haspro(config, 'iSendApi') && haspro(config, 'iOnlineCount')) {
+						sCookie(ckcfgadmore, JSON.stringify(config));
+						if (pi(config.iOnlineCount) > 0) {
+							if (pi(config.iShowCount)) {
+								folder = pi(config.iShowCount);
+							}
+							if (pi(config.iSendApi)) {
+								ckhour = pi(config.iSendApi);
+							}
+							templateUrl = config.tpl;
+							getAdMoreData();
+							return;
+						}
+						else{
+							// 上报 judge
+							var url = api_go+"channel=3&sServiceType="+game+"&uin="+getuin()+"&op=judge&actId=0&iRet=1&sMsg=no ad more data";
+							ls(url, function(){});
+						}
+					}
+				}
+				//没有正常获取到在线的立体化营销webtips广告
+				doShowNew();
+			}
+
+			/*获取url链接中的参数*/
+			function getString(url,sName){  
+				var sRE = "([?&])" + sName + "=([^&]*)";  
+				var oRE = new RegExp(sRE);  
+				if (oRE.test(url)) {  
+					return RegExp["$2"];  
+				}  
+				else {  
+					return null;  
+				}  
+			}  
+			/*当前url为指定url时不弹框*/
+			function samePagecheck(tarPage){
+				var tarPage = tarPage.substring(0,tarPage.lastIndexOf('/'));
+				tarPage = tarPage+'/';
+				var curPage = window.location.origin+window.location.pathname;
+				curPage = curPage.substring(0,curPage.lastIndexOf('/'));
+				curPage = curPage+'/';
+				
+				if(curPage == tarPage){
+					return false;
+				}
+				return true;
+			}
+			
+			function sExchange(){
+				game = location.hostname.replace('.qq.com', '');		
+				// smite 强制处理
+				if( game == "sm"){
+					game = "smite";
+				}
+				if( game == "5s"){
+					game = "x52";
+				}
+				if( game == "eafifa"){
+					game = "fifa";
+				}
+				if( game == "mho"){
+					game = "mh";
+				}
+				if(game == "pvp") {
+					game = "yxzj";
+				}
+				
+				return game;
+			}
+			
+			function doInit() {
+				//console.log("doInit function start...");
+				game = sExchange();		
+				if(game){ //新版webtips接口灰度 放开到所有业务
+					api_go_judge = 'http://apps.idata.qq.com/outer/client_pop/idata_webtipsindex?';
+					newWebtipsApiFlag = true;
+				}
+				
+				if (!inarr(games, game)) {
+					return;
+				}
+				if (!IsPC()) {
+					return;
+				}
+				//http://cf.qq.com/act/a20141211pop/
+				var noPopUrl = window.location.href;
+				var actName = noPopUrl.replace('http://cf.qq.com/', '');
+				actName = actName.split('/');
+				if (actName[1] == 'a20141211pop' || 
+						actName[1] == 'a20150116circle' || 
+						actName[1] == 'a20140115game' || 
+						actName[1] == 'a20150624impaction' || 
+						noPopUrl=='http://nz.qq.com/cp/a20151127qqnc/' || 
+						noPopUrl=='http://cf.qq.com/act/a20141116lucky/index2.htm' || 
+						noPopUrl=='http://cf.qq.com/act/a20160516ntclsacts/index.htm' || 
+						noPopUrl=='http://cf.qq.com/act/a20160726hxb/index.htm' || 
+						noPopUrl=='http://cf.qq.com/cp/a20160722nqy/index.htm' ||  
+						noPopUrl=='http://cf.qq.com/cp/a20160901tkw/neiqian.htm' || 
+						noPopUrl=='http://cf.qq.com/cp/a20160907new/neiqian.htm' || 
+						noPopUrl=='http://cf.qq.com/cp/a20160919gqsq/index.htm' || 
+						noPopUrl=='http://cf.qq.com/cp/a20160913nhl/index.htm' || 
+						noPopUrl=='http://cf.qq.com/cp/a20160913nhl/page01.htm' || 
+						noPopUrl=='http://cf.qq.com/cp/a20160913nhl/page02.htm' || 
+						noPopUrl=='http://cf.qq.com/cp/a20160902nhyd/index.htm' || 
+						noPopUrl=='http://cf.qq.com/cp/a20160919inside/index.htm' || 
+						noPopUrl=='http://nz.qq.com/client/nsl/index.shtml'|| noPopUrl.indexOf('a20151126wb')!=-1||noPopUrl.indexOf('codol.qq.com/web201507/pages/')!=-1
+						) {
+					return;
+				}
+				//
+				currentUrl = window.location.href.split('?');
+				currentUrl = currentUrl[0];
+				
+				//
+				if(currentUrl == ''){
+					console.log("currentUrl empty!!");
+					return;
+				}
+				//
+				var str = currentUrl;
+				str=str.replace(/[^A-Za-z0-9]/g,"_"); //
+				ckact_specific = ckact_specific+"_"+str;
+				
+				apicfg = apicfgori + game + 'WebtipsSystemConfig.js?r=' + Math.random();
+				ls(apicfg, doCfg);
+			}
+
+			function inUinList(u){
+				if(grey){
+					var l=[
+						'286410504',
+						'120011646',
+						'320000729',
+						'752816539',
+						'408675832',
+						'515839387',
+						'542715473',
+						'66410908',
+						'16621243',
+						'117840809',
+						'16064454',
+						'3749999974',
+						'2838183537',
+						'179314306',
+						'39257794',
+					  '1185941985',
+					  '3074585435',
+					  '1356177380',
+					  '2975172730',
+					  '2726237081',
+					  '3157952263',
+					  '2248932665',
+					  '1809984871',
+					  '170991018'
+					]; 
+					if(l.length>0){
+						if (inarr(l, u)) {
+							return true;
+						}else{
+							return false;
+						}  
+					} else {
+						return false;
+					}
+				}
+				return false;
+			}
+			
+		   setTimeout(function(){ls(location.protocol+'//ossweb-img.qq.com/images/clientpop/js/history/gpmhistory.js',function(){});},3000)
+		   			
+			//
+			if(inarr(gamesAct,sExchange())){
+				//
+				if(typeof (x5actflag)=="undefined"){
+					ls('http://ossweb-img.qq.com/images/clientpop/js/acthelper/slideTips.js?_'+Math.random(),function(){});
+				}
+			}
+			if(sExchange() == 'cf' || sExchange() == 'codol' || sExchange() == 'nz'){
+				//
+				ls('http://ossweb-img.qq.com/images/js/recommend/recommend.js?_'+Math.random(),function(){});
+			}
+			
+			  
+			return {
+				init: function (a, t) {
+					if (!a) {
+						//if (!ie6 && !ie7) {
+						if (typeof (JSON) == 'object') {
+							if (typeof JSON.stringify !== 'function' || typeof JSON.parse !== 'function') {
+								ls(apijson, doInit);
+							} else {
+								doInit();
+							}
+
+						} else {
+							ls(apijson, doInit);
+						}
+					} else if (a == 'cl') {
+						close();
+					} else if (a == 'op') {
+						open();
+					} else if (a.indexOf('.') > 0) {
+						r('click', t);
+					}
+				}
+			}
+		})();
+		gpmtips.init()
+
+
